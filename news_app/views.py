@@ -12,6 +12,7 @@ from news_2.custom_permission import OnlyLoggedSuperUser
 from .models import News, Category
 from .forms import ContactForm, CommentForm
 
+CONTACT_TEMPLATE = 'news/contact.html'
 
 # Create your views here.
 
@@ -118,24 +119,24 @@ class HomePageView(ListView):
 
 
 class ContactPageView(TemplateView):
-    template_name = 'news/contact.html'
+    template_name = CONTACT_TEMPLATE
 
     def get(self, request, *args, **kwargs):
         form = ContactForm()
         context = {
             "form": form
         }
-        return render(request, 'news/contact.html', context)
+        return render(request, CONTACT_TEMPLATE, context)
 
     def post(self, request, *args, **kwargs):
         form = ContactForm(request.POST)
-        if request.method == 'POST' and form.is_valid():
+        if form.is_valid():
             form.save()
             return HttpResponse('<h2>Thank you for contact us.</h2>')
         context = {
             "form": form
         }
-        return render(request, 'news/contact.html', context)
+        return render(request, CONTACT_TEMPLATE, context)
 
 
 
