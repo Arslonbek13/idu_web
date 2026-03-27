@@ -1,11 +1,24 @@
-asgiref==3.7.2
+# Core framework
 Django==4.1.7
-django-etc==1.4.0
-django-hitcount==1.3.5
-django-modeltranslation==0.18.11
-Pillow==10.0.0
-python-decouple==3.8
+asgiref==3.7.2
 sqlparse==0.4.4
+
+# Environment / configuration
+python-decouple==3.8
+
+# Image handling (user photo uploads and news images)
+Pillow==10.0.0
+
+# Static file serving in production (WhiteNoise)
+whitenoise==6.5.0
+
+# Internationalisation — multi-language support (EN, UZ, RU)
+django-modeltranslation==0.18.11
+
+# View-count tracking
+django-hitcount==1.3.5
+
+# Utilities
+django-etc==1.4.0
 typing_extensions==4.7.1
 tzdata==2023.3
-whitenoise==6.5.0
