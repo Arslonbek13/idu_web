@@ -74,7 +74,7 @@ UI_COPY = {
     },
 }
 
-def latest_news(request):
+def latest_news(_request):
     news_items = News.published.all().order_by('-publish_time')[:10]
     sidebar_news = news_items[:4]
     categories = Category.objects.all()

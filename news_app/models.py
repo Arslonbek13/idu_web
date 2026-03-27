@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 
-# Create your models here.
-
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -45,7 +43,6 @@ class News(models.Model):
     updated_time = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=2, choices=Status.choices, default=Status.Draft)
 
-    # view_count = models.IntegerField(default=0)
     objects = models.Manager()  # default manager
     published = PublishedManager()
 
@@ -84,4 +81,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment = {self.body} by {self.user}"
-

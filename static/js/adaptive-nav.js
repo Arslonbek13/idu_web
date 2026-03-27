@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var DESKTOP_BREAKPOINT = 992;
+  const DESKTOP_BREAKPOINT = 992;
 
   function AdaptiveNav(root) {
     this.root = root;
@@ -29,28 +29,25 @@
   };
 
   AdaptiveNav.prototype.bindEvents = function () {
-    var self = this;
-
-    this.overflowToggle.addEventListener("click", function (event) {
+    this.overflowToggle.addEventListener("click", (event) => {
       event.preventDefault();
-      self.toggleOverflowMenu();
+      this.toggleOverflowMenu();
     });
 
-    this.searchToggle.addEventListener("click", function (event) {
+    this.searchToggle.addEventListener("click", (event) => {
       event.preventDefault();
-      self.toggleSearchPanel();
+      this.toggleSearchPanel();
     });
 
     document.addEventListener("click", this.handleDocumentClick);
     document.addEventListener("keydown", this.handleEscape);
-    window.addEventListener("resize", this.handleResize);
+    globalThis.addEventListener("resize", this.handleResize);
   };
 
   AdaptiveNav.prototype.handleResize = function () {
-    var self = this;
-    window.clearTimeout(this.resizeTimer);
-    this.resizeTimer = window.setTimeout(function () {
-      self.syncLayout();
+    globalThis.clearTimeout(this.resizeTimer);
+    this.resizeTimer = globalThis.setTimeout(() => {
+      this.syncLayout();
     }, 90);
   };
 
@@ -69,7 +66,7 @@
   };
 
   AdaptiveNav.prototype.syncLayout = function () {
-    var isDesktop = window.innerWidth >= DESKTOP_BREAKPOINT;
+    const isDesktop = globalThis.innerWidth >= DESKTOP_BREAKPOINT;
 
     this.restorePrimaryItems();
     this.closeOverflowMenu();
@@ -93,15 +90,15 @@
       return;
     }
 
-    for (var i = 0; i < this.originalItems.length; i += 1) {
-      if (this.originalItems[i].parentElement !== this.primaryNav) {
-        this.primaryNav.appendChild(this.originalItems[i]);
+    for (const item of this.originalItems) {
+      if (item.parentElement !== this.primaryNav) {
+        this.primaryNav.appendChild(item);
       }
     }
   };
 
   AdaptiveNav.prototype.distributeOverflowItems = function () {
-    var guard = this.originalItems.length;
+    let guard = this.originalItems.length;
 
     while (this.isPrimaryOverflowing() && this.primaryNav.children.length > 1 && guard > 0) {
       this.moveLastPrimaryItemToOverflow();
@@ -131,7 +128,7 @@
   };
 
   AdaptiveNav.prototype.moveLastPrimaryItemToOverflow = function () {
-    var lastItem = this.primaryNav.lastElementChild;
+    const lastItem = this.primaryNav.lastElementChild;
     if (!lastItem) {
       return;
     }
@@ -144,7 +141,7 @@
       return;
     }
 
-    var willOpen = this.overflowMenu.hidden;
+    const willOpen = this.overflowMenu.hidden;
     this.closeSearchPanel();
     this.overflowMenu.hidden = !willOpen;
     this.overflowToggle.setAttribute("aria-expanded", String(willOpen));
@@ -160,7 +157,7 @@
       return;
     }
 
-    var willOpen = !this.root.classList.contains("is-search-open");
+    const willOpen = !this.root.classList.contains("is-search-open");
     this.closeOverflowMenu();
     this.root.classList.toggle("is-search-open", willOpen);
     this.searchToggle.setAttribute("aria-expanded", String(willOpen));
@@ -176,9 +173,9 @@
   };
 
   document.addEventListener("DOMContentLoaded", function () {
-    var roots = document.querySelectorAll("[data-adaptive-nav]");
-    for (var i = 0; i < roots.length; i += 1) {
-      var nav = new AdaptiveNav(roots[i]);
+    const roots = document.querySelectorAll("[data-adaptive-nav]");
+    for (const root of roots) {
+      const nav = new AdaptiveNav(root);
       nav.init();
     }
   });
