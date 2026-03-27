@@ -3,8 +3,14 @@
 
 {% block title %}{% blocktrans %}Logout Page{% endblocktrans %}{% endblock title %}
 
-{% block content %}
-     <h2>{% blocktrans %}Logout{% endblocktrans %}</h2>
-     <p>{% blocktrans %}You have left the site.{% endblocktrans %}<a href="{% url 'login' %}" style="color: red">{% blocktrans %}Re-Login{% endblocktrans %}</a></p>
+{% block body_class %}body-auth{% endblock body_class %}
 
+{% block content %}
+<section class="utility_page_section utility_page_section--center">
+    <div class="utility_panel">
+        <span class="feature_chip">{% blocktrans %}Logout{% endblocktrans %}</span>
+        <h1>{% blocktrans %}Logout{% endblocktrans %}</h1>
+        <p>{% blocktrans %}You have left the site.{% endblocktrans %} <a href="{% url 'login' %}" class="inline_link">{% blocktrans %}Re-Login{% endblocktrans %}</a></p>
+    </div>
+</section>
 {% endblock content %}

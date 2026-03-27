@@ -1,7 +1,7 @@
+from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
-from django.db import models
 
 # Create your models here.
 
@@ -16,6 +16,16 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        section_map = {
+            'local': 'local_news_page',
+            'world': 'world_news_page',
+            'technology': 'technology_news_page',
+            'sport': 'sport_news_page',
+        }
+        route_name = section_map.get(self.name.lower(), 'all_news_list')
+        return reverse(route_name)
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -74,7 +84,4 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment = {self.body} by {self.user}"
-
-
-
 

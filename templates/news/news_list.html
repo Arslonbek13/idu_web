@@ -1,16 +1,38 @@
+{% extends 'news/base.html' %}
+{% load hitcount_tags %}
 {% load i18n %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% blocktrans %}News list{% endblocktrans %}</title>
-</head>
-<body>
-<h1>{% blocktrans %}All news list{% endblocktrans %}</h1>
-{% for news in news_list %}
-  <a href="{% url 'news_detail_page' news.pk %}">
-     <li> {{ news.title }} </li>
-  </a>
-{% endfor %}
-</body>
-</html>
+
+{% block title %}{% blocktrans %}Latest News{% endblocktrans %}{% endblock title %}
+
+{% block content %}
+<section class="category_page_section">
+  <div class="section_intro">
+    <span class="feature_chip">{% blocktrans %}Latest News{% endblocktrans %}</span>
+    <h1>{% blocktrans %}Latest News{% endblocktrans %}</h1>
+    <p>{{ ui_text.tagline }}</p>
+  </div>
+
+  <div class="news_grid">
+    {% for news in news_list %}
+    <article class="news_grid_card">
+      <a href="{{ news.get_absolute_url }}" class="news_grid_image"><img src="{{ news.image.url }}" alt="{{ news.title }}"></a>
+      <div class="news_grid_body">
+        <span class="feature_chip">{{ news.category.name }}</span>
+        <h2><a href="{{ news.get_absolute_url }}">{{ news.title }}</a></h2>
+        <p>{{ news.body|truncatewords:28 }}</p>
+        <div class="news_grid_meta">
+          <span><i class="fa fa-clock-o"></i> {{ news.publish_time|date:"d M Y" }}</span>
+          <span><i class="fa fa-eye"></i> {% blocktrans %}Views:{% endblocktrans %} {% get_hit_count for news %}</span>
+        </div>
+      </div>
+    </article>
+    {% empty %}
+    <div class="empty_state_card">
+      <h3>{% blocktrans %}Latest News{% endblocktrans %}</h3>
+      <p>{{ ui_text.empty_section }}</p>
+      <a class="section_cta" href="{% url 'home_page' %}">{% blocktrans %}Home{% endblocktrans %}</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock content %}

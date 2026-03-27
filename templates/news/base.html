@@ -1,202 +1,338 @@
 {% load static %}
 {% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html>
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
-<title>{% block title %}{% endblock title  %}</title>
+<title>{% block title %}{% endblock title %}</title>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="{{ ui_text.footer_desc }}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/animate.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/li-scroller.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/slick.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/jquery.fancybox.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/theme.css' %}">
-<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/modern.css' %}">
 </head>
-<body>
+<body class="site-page-body {% block body_class %}{% endblock body_class %}">
 <div id="preloader">
   <div id="status">&nbsp;</div>
 </div>
-<a class="scrollToTop" href="#"><i class="fa fa-angle-up"></i></a>
-<div class="container">
+<a class="skip_link" href="#main-content">{% trans "Skip to content" %}</a>
+<a class="scrollToTop" href="#top" aria-label="{% trans 'Back to top' %}">
+  <i class="fa fa-arrow-up" aria-hidden="true"></i>
+</a>
+
+<div class="site-shell" id="top">
+  {% with current_url=request.resolver_match.url_name %}
   <header id="header">
-    <div class="row">
-      <div class="col-lg-12 col-md-12 col-sm-12">
-        <div class="header_top">
-          <div class="header_top_left">
-            <ul class="top_nav">
-              <li><a href="{% url 'home_page' %}">{% blocktrans %}Home{% endblocktrans %}</a></li>
-              <li><a href="#">{% blocktrans %}About{% endblocktrans %}</a></li>
-              <li><a href="{% url 'contact_page' %}">{% blocktrans %}Contact{% endblocktrans %}</a></li>
-              {% if user.is_authenticated and user.is_superuser %}
-                 <li><a href="{% url 'admin_page' %}">{% blocktrans %}Admin page{% endblocktrans %}</a></li>
-              {% endif %}
-              <li>
-              <form action="{% url 'set_language' %}" method="post">{% csrf_token %}
-                  <input name="next" type="hidden" value="{{ redirect_to }}">
-                  <select name="language">
-                      {% get_current_language as LANGUAGE_CODE %}
-                      {% get_available_languages as LANGUAGES %}
-                      {% get_language_info_list for LANGUAGES as languages %}
-                      {% for language in languages %}
-                          <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
-                              {{ language.name_local }} ({{ language.code }})
-                          </option>
-                      {% endfor %}
-                  </select>
-                  <input type="submit" value="Go">
-              </form>
-              </li>
-            </ul>
-          </div>
-          <div class="header_top_right ">
-            {% if request.user.is_authenticated %}
-            <p><a href="{% url 'logout'%}" style="color: yellow">{% blocktrans %}Logout{% endblocktrans %}</a></p>
-            <p><a href="{% url 'user_profile'%}" style="color: yellow">{% blocktrans %}My Profile{% endblocktrans %}</a></p>
-            {% else %}
-            <p><a href="{% url 'login' %}" style="color: yellow">{% blocktrans %}Login to the site{% endblocktrans %}</a></p>
-            {% endif %}
-            <p>{% now "jS F Y H:i" %}</p>
-          </div>
+    <div class="header_top">
+      <div class="header_top_left">
+        <span class="topbar_label">NewsFeed</span>
+        <ul class="top_nav top_nav_links">
+          <li class="{% if current_url == 'home_page' %}active{% endif %}">
+            <a href="{% url 'home_page' %}">{% blocktrans %}Home{% endblocktrans %}</a>
+          </li>
+          <li>
+            <a href="#site-about">{% blocktrans %}About{% endblocktrans %}</a>
+          </li>
+          <li class="{% if current_url == 'contact_page' %}active{% endif %}">
+            <a href="{% url 'contact_page' %}">{% blocktrans %}Contact{% endblocktrans %}</a>
+          </li>
+          <li class="{% if current_url == 'all_news_list' %}active{% endif %}">
+            <a href="{% url 'all_news_list' %}">{{ ui_text.latest_news }}</a>
+          </li>
+          {% if user.is_authenticated and user.is_superuser %}
+          <li class="{% if current_url == 'admin_page' or current_url == 'news_create' or current_url == 'news_update' or current_url == 'news_delete' %}active{% endif %}">
+            <a href="{% url 'admin_page' %}">{% blocktrans %}Admin page{% endblocktrans %}</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div class="header_top_right">
+        <div class="header_top_actions">
+          {% if request.user.is_authenticated %}
+          <a href="{% url 'user_profile' %}">
+            <i class="fa fa-user-circle" aria-hidden="true"></i>
+            <span>{% blocktrans %}My Profile{% endblocktrans %}</span>
+          </a>
+          <a href="{% url 'logout' %}">
+            <i class="fa fa-sign-out" aria-hidden="true"></i>
+            <span>{% blocktrans %}Logout{% endblocktrans %}</span>
+          </a>
+          {% else %}
+          <a href="{% url 'login' %}">
+            <i class="fa fa-sign-in" aria-hidden="true"></i>
+            <span>{% blocktrans %}Login to the site{% endblocktrans %}</span>
+          </a>
+          {% endif %}
+          <span class="header_time">
+            <i class="fa fa-clock-o" aria-hidden="true"></i>
+            <span>{% now "jS F Y H:i" %}</span>
+          </span>
+        </div>
+
+        <form action="{% url 'set_language' %}" method="post" class="language_switcher">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.get_full_path }}">
+          <label class="sr-only" for="language-switcher">{% trans "Language" %}</label>
+          <select id="language-switcher" name="language" onchange="this.form.submit()">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% get_language_info_list for LANGUAGES as languages %}
+            {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+              {{ language.name_local }}
+            </option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="language_switcher_btn">{{ ui_text.go }}</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="header_bottom">
+      <div class="logo_area">
+        <a href="{% url 'home_page' %}" class="logo">
+          <img src="{% static 'images/logo.jpg' %}" alt="{% trans 'NewsFeed logo' %}">
+        </a>
+        <div class="site_identity" id="site-about">
+          <span class="site_label">NewsFeed</span>
+          <p>{{ ui_text.tagline }}</p>
         </div>
       </div>
-      <div class="col-lg-12 col-md-12 col-sm-12">
-        <div class="header_bottom">
-          <div class="logo_area"><a href="{% url 'home_page' %}" class="logo"><img src="{% static 'images/logo.jpg' %}" alt=""></a></div>
-          <div class="add_banner"><a href="#"><img src="{% static 'images/addbanner_728x90_V1.jpg' %}" alt=""></a></div>
+
+      <div class="hero_panel">
+        <div class="hero_panel_content">
+          <span class="hero_panel_label">{{ ui_text.latest_news }}</span>
+          <p class="hero_panel_title">{{ ui_text.footer_desc }}</p>
+          <p class="hero_panel_copy">{{ ui_text.tagline }}</p>
+        </div>
+        <div class="hero_panel_actions">
+          <a href="{% url 'all_news_list' %}" class="section_cta">{{ ui_text.browse_news }}</a>
+          <a href="{% url 'contact_page' %}" class="section_cta section_cta_secondary">{% blocktrans %}Contact Us{% endblocktrans %}</a>
         </div>
       </div>
     </div>
   </header>
+
   <section id="navArea">
-    <nav class="navbar navbar-inverse" role="navigation">
-      <div class="navbar-header d-flex">
-          <div class="flex-fill">
-             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-          </div>
-          <div class="flex-fill">
-            <li class="hidden-lg">
-              <form method="get" action="{% url 'search_results' %}">
-                 <input type="search" name="s" placeholder="Search..." class="form-control navbar-form " style="width:50%; height:7px; margin-left: 20px; margin-top:-6px;">
-              </form>
-            </li>
-          </div>
+    <nav class="navbar navbar-inverse" role="navigation" aria-label="{% trans 'Primary navigation' %}">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">{% trans "Toggle navigation" %}</span>
+          <span class="nav_toggle_label">{% trans "Menu" %}</span>
+          <span class="fa fa-bars" aria-hidden="true"></span>
+        </button>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav main_nav">
-          <li class="container col-sm-1 visible-xs-block">
-            {% if request.user.is_authenticated %}
-            <p><a href="{% url 'user_profile'%}" style="color: yellow">{% blocktrans %}My Profile{% endblocktrans %}</a></p>
-            <p><a href="{% url 'logout'%}" style="color: yellow">{% blocktrans %}Logout{% endblocktrans %}</a></p>
-            {% else %}
-            <p><a href="{% url 'login' %}" style="color: yellow">{% blocktrans %}Login to the site{% endblocktrans %}</a></p>
-            {% endif %}
-          </li>
-          <li class="active"><a href="{% url 'home_page' %}"><span class="fa fa-home desktop-home"></span><span class="mobile-show">{% blocktrans %}Home{% endblocktrans %}</span></a></li>
-          <li><a href="{% url 'local_news_page' %}">{% blocktrans %}Local News{% endblocktrans %}</a></li>
-          <li><a href="{% url 'world_news_page' %}">{% blocktrans %}World News{% endblocktrans %}</a></li>
-          <li><a href="{% url 'technology_news_page' %}">{% blocktrans %}Technology{% endblocktrans %}</a></li>
-          <li><a href="{% url 'sport_news_page' %}">{% blocktrans %}Sport{% endblocktrans %}</a></li>
-          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{% blocktrans %}Mobile{% endblocktrans %}</a>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="#">Android</a></li>
-              <li><a href="#">Samsung</a></li>
-              <li><a href="#">Nokia</a></li>
-              <li><a href="#">Walton Mobile</a></li>
-              <li><a href="#">Symphony</a></li>
-            </ul>
-          </li>
-          <li><a href="{% url 'contact_page' %}">{% blocktrans %}Contact Us{% endblocktrans %}</a></li>
-          <li><a href="{% url '404_page' %}">{% blocktrans %}404 Page{% endblocktrans %}</a></li>
-          <li class="hidden-xs">
-            <form method="get" action="{% url 'search_results' %}">
-              <input type="search" name="s" placeholder="Search..." class="form-control navbar-form navbar-left" style=" margin-left: 18rem;">
-            </form>
-          </li>
-        </ul>
+        <div class="nav_row_shell" data-adaptive-nav>
+          <ul class="nav navbar-nav main_nav nav_links_row" data-nav-primary>
+            <li class="{% if current_url == 'home_page' %}active{% endif %}">
+              <a href="{% url 'home_page' %}">
+                <span class="fa fa-home desktop-home" aria-hidden="true"></span>
+                <span>{% blocktrans %}Home{% endblocktrans %}</span>
+              </a>
+            </li>
+            <li class="{% if current_url == 'local_news_page' %}active{% endif %}">
+              <a href="{% url 'local_news_page' %}">{% blocktrans %}Local News{% endblocktrans %}</a>
+            </li>
+            <li class="{% if current_url == 'world_news_page' %}active{% endif %}">
+              <a href="{% url 'world_news_page' %}">{% blocktrans %}World News{% endblocktrans %}</a>
+            </li>
+            <li class="{% if current_url == 'technology_news_page' %}active{% endif %}">
+              <a href="{% url 'technology_news_page' %}">{% blocktrans %}Technology{% endblocktrans %}</a>
+            </li>
+            <li class="{% if current_url == 'sport_news_page' %}active{% endif %}">
+              <a href="{% url 'sport_news_page' %}">{% blocktrans %}Sport{% endblocktrans %}</a>
+            </li>
+            <li class="{% if current_url == 'contact_page' %}active{% endif %}">
+              <a href="{% url 'contact_page' %}">{% blocktrans %}Contact Us{% endblocktrans %}</a>
+            </li>
+          </ul>
+
+          <div class="nav_tools">
+            <div class="nav_overflow" data-nav-overflow>
+              <button type="button" class="nav_overflow_toggle" data-nav-overflow-toggle hidden aria-expanded="false" aria-haspopup="true">
+                <span class="fa fa-ellipsis-h" aria-hidden="true"></span>
+                <span>{{ ui_text.explore_section }}</span>
+              </button>
+              <ul class="nav_overflow_menu" data-nav-overflow-menu hidden></ul>
+            </div>
+
+            <div class="nav_search_shell">
+              <button type="button" class="nav_search_toggle" data-nav-search-toggle hidden aria-expanded="false" aria-label="{{ ui_text.search_news }}">
+                <span class="fa fa-search" aria-hidden="true"></span>
+                <span class="sr-only">{{ ui_text.search_news }}</span>
+              </button>
+
+              <form method="get" action="{% url 'search_results' %}" class="site_search_form" data-nav-search-form>
+                <label class="sr-only" for="site-search-input">{% trans "Search news" %}</label>
+                <input id="site-search-input" type="search" name="s" value="{{ request.GET.s }}" placeholder="{{ ui_text.search_news }}" class="form-control">
+                <button type="submit" class="site_search_submit" aria-label="{{ ui_text.search_news }}">
+                  <span class="fa fa-search" aria-hidden="true"></span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </nav>
   </section>
+
   <section id="newsSection">
-    <div class="row">
-      <div class="col-lg-12 col-md-12">
-        <div class="latest_newsarea"> <span>{% blocktrans %}Latest News{% endblocktrans %}</span>
-          <ul id="ticker01" class="news_sticker">
-          {% for news in latest_news %}
-            <li><a href="#"><img src="{{ news.image.url }}" alt="">{{ news.title }}</a></li>
-          {% endfor %}
-          </ul>
-          <div class="social_area">
-            <ul class="social_nav">
-              <li class="facebook"><a href="https://facebook.com/ArslonbekAbduqahhorov"></a></li>
-              <li class="twitter"><a href="#"></a></li>
-              <li class="flickr"><a href="#"></a></li>
-              <li class="pinterest"><a href="#"></a></li>
-              <li class="googleplus"><a href="#"></a></li>
-              <li class="vimeo"><a href="#"></a></li>
-              <li class="youtube"><a href="#"></a></li>
-              <li class="mail"><a href="https://gmail.com/abduqahhorovarslonbek@gmail.com"></a></li>
-            </ul>
-          </div>
+    <div class="latest_newsarea" data-news-ticker>
+      <div class="latest_news_header">
+        <div class="latest_news_tag">{% blocktrans %}Latest News{% endblocktrans %}</div>
+        <div class="latest_news_controls"{% if latest_news|length < 2 %} hidden{% endif %}>
+          <button type="button" class="latest_news_control" data-ticker-prev aria-label="{% trans 'Previous headline' %}">
+            <span class="fa fa-chevron-left" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="latest_news_control" data-ticker-next aria-label="{% trans 'Next headline' %}">
+            <span class="fa fa-chevron-right" aria-hidden="true"></span>
+          </button>
         </div>
+      </div>
+
+      <div class="latest_news_panel">
+        <ul id="ticker01" class="news_sticker">
+          {% for news in latest_news %}
+          <li class="news_sticker_item{% if forloop.first %} is-active{% endif %}">
+            <a href="{{ news.get_absolute_url }}">
+              <span class="news_sticker_thumb">
+                <img src="{{ news.image.url }}" alt="{{ news.title }}">
+              </span>
+              <span class="news_sticker_copy">
+                <span class="news_sticker_kicker">{{ news.category.name }}</span>
+                <span class="news_sticker_title">{{ news.title }}</span>
+              </span>
+            </a>
+          </li>
+          {% empty %}
+          <li class="news_sticker_item news_sticker_item--empty is-active">
+            <div class="news_sticker_empty">{{ ui_text.empty_section }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="latest_news_actions">
+        <ul class="latest_news_links">
+          <li><a href="{% url 'home_page' %}" title="{% trans 'Home' %}">{% trans 'Home' %}</a></li>
+          <li><a href="{% url 'local_news_page' %}" title="{% trans 'Local News' %}">{% trans 'Local News' %}</a></li>
+          <li><a href="{% url 'world_news_page' %}" title="{% trans 'World News' %}">{% trans 'World News' %}</a></li>
+          <li><a href="{% url 'technology_news_page' %}" title="{% trans 'Technology' %}">{% trans 'Technology' %}</a></li>
+          <li><a href="{% url 'sport_news_page' %}" title="{% trans 'Sport' %}">{% trans 'Sport' %}</a></li>
+          <li><a href="{% url 'contact_page' %}" title="{% trans 'Contact Us' %}">{% trans 'Contact Us' %}</a></li>
+        </ul>
       </div>
     </div>
   </section>
+  {% endwith %}
 
-    {% block content %}
+  {% if messages %}
+  <div id="toast-container" class="toast-stack">
+    {% for message in messages %}
+    <div class="modern-toast toast-{{ message.tags|default:'info' }}">
+      <span class="modern-toast__message">{{ message }}</span>
+      <button type="button" class="modern-toast__dismiss" onclick="this.parentElement.remove()" aria-label="{% trans 'Close message' %}">&times;</button>
+    </div>
+    {% endfor %}
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toasts = document.querySelectorAll('.modern-toast');
+      toasts.forEach(function(toast) {
+        setTimeout(function() {
+          toast.classList.add('is-dismissing');
+          setTimeout(function() {
+            toast.remove();
+          }, 250);
+        }, 5000);
+      });
+    });
+  </script>
+  {% endif %}
 
-    {% endblock content %}
+  <main class="site-main" id="main-content">
+    {% block content %}{% endblock content %}
+  </main>
 
   <footer id="footer">
     <div class="footer_top">
-      <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-4">
-          <div class="footer_widget wow fadeInLeftBig">
-            <h2>{% blocktrans %}Flickr Images{% endblocktrans %}</h2>
-          </div>
+      <div class="footer_intro">
+        <div class="footer_brand">
+          <span class="site_label">NewsFeed</span>
+          <p class="footer_brand_copy">{{ ui_text.footer_desc }}</p>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4">
-          <div class="footer_widget wow fadeInDown">
-            <h2>Tag</h2>
-            <ul class="tag_nav">
-             {% for category in categories %}
-              <li><a href="#">{{ category.name }}</a></li>
-             {% endfor %}
+        <nav class="footer_quick_links" aria-label="{% trans 'Footer navigation' %}">
+          <a href="{% url 'home_page' %}">{% trans "Home" %}</a>
+          <a href="{% url 'all_news_list' %}">{{ ui_text.latest_news }}</a>
+          <a href="{% url 'local_news_page' %}">{% trans "Local News" %}</a>
+          <a href="{% url 'world_news_page' %}">{% trans "World News" %}</a>
+          <a href="{% url 'contact_page' %}">{% trans "Contact Us" %}</a>
+        </nav>
+      </div>
+
+      <div class="footer_grid">
+        <div class="footer_column">
+          <div class="footer_widget footer_widget--stories">
+            <h2>{{ ui_text.latest_news }}</h2>
+            <ul class="footer_story_list">
+              {% for news in sidebar_news %}
+              <li><a href="{{ news.get_absolute_url }}">{{ news.title|truncatewords:8 }}</a></li>
+              {% empty %}
+              <li class="footer_empty">{{ ui_text.empty_section }}</li>
+              {% endfor %}
             </ul>
           </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-4">
-          <div class="footer_widget wow fadeInRightBig">
+
+        <div class="footer_column">
+          <div class="footer_widget footer_widget--tags">
+            <h2>{% trans "Tag" %}</h2>
+            <ul class="tag_nav">
+              {% for category in categories %}
+              <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+              {% empty %}
+              <li class="footer_empty">{{ ui_text.empty_section }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer_column">
+          <div class="footer_widget footer_widget--contact">
             <h2>{% blocktrans %}Contact{% endblocktrans %}</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-            <address>
-            Perfect News,1238 S . 123 Olmazor 25 Tashkent 3333,UZB Phone: +998 93 696 69 13
+            <p class="footer_copy">{{ ui_text.footer_desc }}</p>
+            <address class="footer_address">
+              Tashkent, Uzbekistan<br>
+              +998 93 696 69 13<br>
+              <a class="footer_link" href="{% url 'contact_page' %}">{{ ui_text.open_contact_page }}</a>
             </address>
           </div>
         </div>
       </div>
-    </div>
-    <div class="footer_bottom">
-      <p class="developer">Developed By Arslonbek</p>
+
+      <div class="footer_bottom">
+        <p class="developer">{{ ui_text.developed_by }}</p>
+        <p class="footer_bottom_note">{{ ui_text.tagline }}</p>
+      </div>
     </div>
   </footer>
 </div>
 
 {% block javascript %}
 <script src="{% static 'js/jquery.min.js' %}"></script>
-<script src="{% static 'js/wow.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/slick.min.js' %}"></script>
-<script src="{% static 'js/jquery.li-scroller.1.0.js' %}"></script>
 <script src="{% static 'js/jquery.newsTicker.min.js' %}"></script>
 <script src="{% static 'js/jquery.fancybox.pack.js' %}"></script>
 <script src="{% static 'js/custom.js' %}"></script>
-<script src="{% static 'js/html5shiv.min.js' %}"></script>
-<script src="{% static 'js/respond.min.js' %}"></script>
+<script src="{% static 'js/adaptive-nav.js' %}"></script>
 {% endblock javascript %}
 
 </body>
+</html>

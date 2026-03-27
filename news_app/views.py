@@ -1,5 +1,4 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import HttpResponse
@@ -7,21 +6,21 @@ from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, UpdateView, DeleteView, CreateView
 from hitcount.utils import get_hitcount_model
+from hitcount.views import HitCountMixin
 
+from news_2.custom_permission import OnlyLoggedSuperUser
 from .models import News, Category
 from .forms import ContactForm, CommentForm
-from news_2.custom_permission import OnlyLoggedSuperUser
-from hitcount.views import HitCountDetailView, HitCountMixin
 
 
 # Create your views here.
 
 
 def news_list(request):
-    news_list = News.published.all()
+    all_news = News.published.all()
     categories = Category.objects.all()
     context = {
-        'news_list': news_list,
+        'news_list': all_news,
         'categories': categories
     }
     return render(request, "news/news_list.html", context)
@@ -44,7 +43,7 @@ def news_detail(request, news):
         hitcontext['total_hit'] = hits
 
     categories = Category.objects.all()
-    news_list = News.published.all().order_by('-publish_time')[:15]
+    recent_news = News.published.all().order_by('-publish_time')[:15]
     local_one = News.published.filter(category__name='Local').order_by("-publish_time")
     local_news = News.published.all().filter(category__name='Local').order_by('-publish_time')[:5]
     comments = news.comments.filter(active=True)
@@ -62,7 +61,7 @@ def news_detail(request, news):
         comment_form = CommentForm()
     context = {
         'news': news,
-        'news_list': news_list,
+        'news_list': recent_news,
         'categories': categories,
         'local_one': local_one,
         'local_news': local_news,
@@ -97,7 +96,6 @@ class HomePageView(ListView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['news_list'] = News.published.all().order_by('-publish_time')[:15]
-        # context['local_one'] = News.published.filter(category__name='Local').order_by("-publish_time")
         context['local_news'] = News.published.all().filter(category__name_en='Local').order_by('-publish_time')[:5]
         context['technology'] = News.published.all().filter(category__name_en='Technology').order_by('-publish_time')[:5]
         context['sport'] = News.published.all().filter(category__name_en='Sport').order_by('-publish_time')[:5]
@@ -154,14 +152,13 @@ class LocalNewsView(ListView):
     context_object_name = 'local_news'
 
     def get_queryset(self):
-        news = self.model.published.all().filter(category__name='local')
-        return news
+        return self.model.published.all().filter(category__name_en='Local').order_by('-publish_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['news_list'] = News.published.all().order_by('-publish_time')[:15]
-        context['local_news'] = News.published.all().filter(category__name='Local').order_by('-publish_time')[:5]
+        context['local_news'] = self.get_queryset()
         return context
 
 
@@ -172,14 +169,13 @@ class WorldNewsView(ListView):
     context_object_name = 'world_news'
 
     def get_queryset(self):
-        news = self.model.published.all().filter(category__name='world')
-        return news
+        return self.model.published.all().filter(category__name_en='World').order_by('-publish_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['news_list'] = News.published.all().order_by('-publish_time')[:15]
-        context['world'] = News.published.all().filter(category__name='World').order_by('-publish_time')[:5]
+        context['world_news'] = self.get_queryset()
         return context
 
 
@@ -190,14 +186,13 @@ class TechnologyNewsView(ListView):
     context_object_name = 'technology_news'
 
     def get_queryset(self):
-        news = self.model.published.all().filter(category__name='technology')
-        return news
+        return self.model.published.all().filter(category__name_en='Technology').order_by('-publish_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['news_list'] = News.published.all().order_by('-publish_time')[:15]
-        context['technology'] = News.published.all().filter(category__name='Technology').order_by('-publish_time')[:5]
+        context['technology_news'] = self.get_queryset()
         return context
 
 
@@ -208,14 +203,13 @@ class SportNewsView(ListView):
     context_object_name = 'sport_news'
 
     def get_queryset(self):
-        news = self.model.published.all().filter(category__name='sport')
-        return news
+        return self.model.published.all().filter(category__name_en='Sport').order_by('-publish_time')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['news_list'] = News.published.all().order_by('-publish_time')[:15]
-        context['sport'] = News.published.all().filter(category__name='Sport').order_by('-publish_time')[:5]
+        context['sport_news'] = self.get_queryset()
         return context
 
 
@@ -259,12 +253,27 @@ class SearchResultsList(ListView):
     context_object_name = 'all_news'
 
     def get_queryset(self):
-        query = self.request.GET.get('s')
-        return News.objects.filter(
-            Q(title__icontains=query) | Q(body__icontains=query)
-        )
+        query = self.request.GET.get('s', '').strip()
+        queryset = self.model.published.all().order_by('-publish_time')
+        if not query:
+            return queryset
+        return queryset.filter(
+            Q(title__icontains=query) |
+            Q(title_en__icontains=query) |
+            Q(title_uz__icontains=query) |
+            Q(title_ru__icontains=query) |
+            Q(body__icontains=query) |
+            Q(body_en__icontains=query) |
+            Q(body_uz__icontains=query) |
+            Q(body_ru__icontains=query) |
+            Q(category__name__icontains=query) |
+            Q(category__name_en__icontains=query) |
+            Q(category__name_uz__icontains=query) |
+            Q(category__name_ru__icontains=query)
+        ).distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('s', '').strip()
         context['categories'] = Category.objects.all()
         return context

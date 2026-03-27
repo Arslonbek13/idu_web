@@ -4,10 +4,18 @@
 
 {% block title %}{{news.title}}{% endblock title %}
 
+{% block body_class %}body-admin{% endblock body_class %}
+
 {% block content %}
-    <h2 class="text-center">{% blocktrans %}Delete News{% endblocktrans %}</h2>
-    <form method="post">{% csrf_token %}
-    <p>{{ news.title | truncatewords:4 }} ... {% blocktrans %} Do you want to delete the news?{% endblocktrans %}</p>
-    <button type="submit" class="btn btn-danger ml-2">{% blocktrans %}Delete{% endblocktrans %}</button>
-    </form>
+<section class="utility_page_section utility_page_section--center">
+    <div class="utility_panel utility_panel--danger">
+        <span class="feature_chip">{% blocktrans %}Delete News{% endblocktrans %}</span>
+        <h1>{% blocktrans %}Delete News{% endblocktrans %}</h1>
+        <p>{{ news.title | truncatewords:8 }}. {% blocktrans %}Do you want to delete the news?{% endblocktrans %}</p>
+        <form method="post" class="utility_inline_form">{% csrf_token %}
+            <button type="submit" class="btn btn-danger article_delete_btn">{% blocktrans %}Delete{% endblocktrans %}</button>
+            <a href="{{ news.get_absolute_url }}" class="section_cta section_cta_secondary">{% blocktrans %}Cancel{% endblocktrans %}</a>
+        </form>
+    </div>
+</section>
 {% endblock content %}

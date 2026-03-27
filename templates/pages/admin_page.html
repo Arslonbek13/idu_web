@@ -4,26 +4,63 @@
 
 {% block title %}{% blocktrans %}Admin Page{% endblocktrans %}{% endblock title %}
 
+{% block body_class %}body-admin{% endblock body_class %}
+
 {% block content %}
+<section class="category_page_section admin_workspace">
+  <div class="section_intro">
+    <span class="feature_chip">{% blocktrans %}Admin Page{% endblocktrans %}</span>
+    <h1>{% blocktrans %}Admin Page{% endblocktrans %}</h1>
+    <p>{{ ui_text.tagline }}</p>
+  </div>
 
-<h1>{% blocktrans %}Admin Page{% endblocktrans %}</h1>
-<h3>{% blocktrans %}All admins{% endblocktrans %}</h3>
-<table class="table table-board table-responsive table-striped">
-    <tr>
-        <th>{% blocktrans %}Username{% endblocktrans %}</th>
-        <th>{% blocktrans %}First name{% endblocktrans %}</th>
-        <th>{% blocktrans %}Last name{% endblocktrans %}</th>
-    </tr>
+  <div class="dashboard_stats">
+    <div class="dashboard_stat_card">
+      <span class="feature_chip">{% blocktrans %}All admins{% endblocktrans %}</span>
+      <strong>{{ admin_users|length }}</strong>
+    </div>
+    <div class="dashboard_stat_card">
+      <span class="feature_chip">{% blocktrans %}Categories{% endblocktrans %}</span>
+      <strong>{{ categories|length }}</strong>
+    </div>
+    <div class="dashboard_stat_card dashboard_stat_card--action">
+      <a href="{% url 'news_create' %}" class="section_cta admin_add_news_btn">
+        <i class="fa fa-plus"></i>
+        <span>{% blocktrans %}Add news{% endblocktrans %}</span>
+      </a>
+    </div>
+  </div>
 
-{% for user in admin_users %}
-    <tr>
-        <td>{{ user.username }}</td>
-        <td>{{ user.first_name }}</td>
-        <td>{{ user.last_name }}</td>
-    </tr>
-{% endfor %}
-</table>
+  <div class="single_post_content premium_section admin_page_panel">
+    <div class="section_heading_row">
+      <h2><span>{% blocktrans %}All admins{% endblocktrans %}</span></h2>
+      <span class="table_meta_badge">{{ admin_users|length }}</span>
+    </div>
 
-<h2><a href="{% url 'news_create' %}" class="text-danger">{% blocktrans %}Add news{% endblocktrans %}</a></h2>
-
+    <div class="table-responsive">
+      <table class="table table-board table-striped admin_table">
+        <thead>
+          <tr>
+            <th>{% blocktrans %}Username{% endblocktrans %}</th>
+            <th>{% blocktrans %}First name{% endblocktrans %}</th>
+            <th>{% blocktrans %}Last name{% endblocktrans %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in admin_users %}
+          <tr>
+            <td>{{ user.username }}</td>
+            <td>{{ user.first_name|default:"—" }}</td>
+            <td>{{ user.last_name|default:"—" }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">{{ ui_text.empty_section }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 {% endblock content %}

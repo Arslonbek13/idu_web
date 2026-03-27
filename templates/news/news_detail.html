@@ -5,53 +5,76 @@
 
 {% block title %}{{news.title}}{% endblock title %}
 
-{% block content %}
+{% block body_class %}body-article{% endblock body_class %}
 
-  <div class="containerr">
-    <h2 style="border-bottom: 2px solid #ccc; padding-bottom: 20px; font-size: 24px;">{{news.title}}</h2>
-    <h5>{{news.publish_time}} | Views: <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for news %} | Comments: {{ comment_count }} </h5>
-    <img style="width:100%" src="{{news.image.url}}">
-    <p>{{news.body}}</p>
+{% block content %}
+<section class="article_detail_section">
+  <div class="modern-article-container">
+    <div class="modern-article-header">
+      <div class="article_kicker_row">
+        <a href="{% url 'all_news_list' %}" class="inline_link article_back_link">{{ ui_text.latest_news }}</a>
+        <span class="feature_chip">{{ news.category.name }}</span>
+      </div>
+      <h1 class="modern-article-title">{{news.title}}</h1>
+      <div class="modern-article-meta">
+        <span><i class="fa fa-clock-o"></i> {{ news.publish_time|date:"d M Y, H:i" }}</span>
+        <span><i class="fa fa-eye"></i> {% blocktrans %}Views:{% endblocktrans %} {% get_hit_count for news %}</span>
+        <span><i class="fa fa-comments"></i> {% blocktrans %}Comments:{% endblocktrans %} {{ comment_count }}</span>
+      </div>
+    </div>
+    
+    <img class="modern-article-image" src="{{news.image.url}}" alt="{{news.title}}">
+    
+    <div class="modern-article-body">
+      {{ news.body|linebreaks }}
+    </div>
+
+    {% if request.user.is_authenticated and request.user.is_superuser %}
+    <div class="article_actions">
+        <a href="{% url 'news_update' news.slug %}" class="btn btn-primary">{% blocktrans %}Edit{% endblocktrans %}</a>
+        <a href="{% url 'news_delete' news.slug %}" class="btn btn-danger article_delete_btn">{% blocktrans %}Delete{% endblocktrans %}</a>
+    </div>
+    {% endif %}
   </div>
 
-{% if request.user.is_authenticated and request.user.is_superuser %}
-     <div class="card-footer text-center">
-         <a href="{% url 'news_update'  news.slug %}"><button type="submit" class="btn btn-info ml-2">{% blocktrans %}Edit{% endblocktrans %}</button></a>
-         <a href="{% url 'news_delete'  news.slug %}"><button type="submit" class="btn btn-danger ml-2">{% blocktrans %}Delete{% endblocktrans %}</button></a>
-     </div>
-{% endif %}
+  <div class="modern-comments-section">
+    <div class="modern-article-header">
+      <h3>{% blocktrans %}There are {{ comment_count }} comments on this news{% endblocktrans %}</h3>
+    </div>
 
-<h3>{% blocktrans %}There are {{ comment_count }} comments on this news{% endblocktrans %}</h3>
+    {% if comments %}
+    {% for comment in comments %}
+    <div class="modern-comment-card">
+        <div class="modern-comment-header">
+            <span class="modern-comment-author"><i class="fa fa-user-circle"></i> {{ comment.user }}</span>
+            <span class="modern-comment-time">{{ comment.created_time|date:"d M Y, H:i" }}</span>
+        </div>
+        <div class="modern-comment-body">
+            {{ comment.body | linebreaks }}
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="modern-comment-form-card modern-comment-empty">
+        <p class="comment_notice">{% blocktrans %}Comments:{% endblocktrans %} 0</p>
+        <p>{{ ui_text.empty_section }}</p>
+    </div>
+    {% endif %}
 
-{% for comment in comments %}
-
-     <div class="comments" style="padding: 10px">
-         <p class="font-weight-bold">
-             {{ comment.user }}
-         <span class="text-muted font-weight-normal">
-             {{ comment.created_time }}
-         </span>
-         </p>
-         {{ comment.body | linebreaks }}
-     </div>
-
-{% endfor %}
-
-{% if user.is_authenticated %}
-     <div class=" container col-md-8 card mb-4 mt-3">
-         <div class="card-body">
-             <h3 class="card-title">{% blocktrans %}Leave comment{% endblocktrans %}</h3>
-             <form method="POST" style="margin-top: 1.3em">{% csrf_token %}
-                {{ comment_form.as_p }}
-                 <button type="submit" class="btn btn-primary btn-lg">{% blocktrans %}Send{% endblocktrans %}</button>
-             </form>
-         </div>
-     </div>
-{% else %}
-     <div class="card-body">
-         <p class="text-danger">{% blocktrans %}Only registered users can leave comments{% endblocktrans %}</p>
-         <p> <a href="{% url 'user_register' %}" class="text-danger">{% blocktrans %}Register{% endblocktrans %}</a>{% blocktrans %} to leave a comment or {% endblocktrans %}<a href="{% url 'login' %}" class="text-danger">{% blocktrans %}login{% endblocktrans %}</a> {% blocktrans %}the site.{% endblocktrans %}</p>
-     </div>
-{% endif %}
+    {% if user.is_authenticated %}
+    <div class="modern-comment-form-card mt-3">
+        <h3>{% blocktrans %}Leave comment{% endblocktrans %}</h3>
+        <form method="POST" class="comment_form">{% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="section_cta">{% blocktrans %}Send{% endblocktrans %}</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="modern-comment-form-card modern-comment-empty mt-3">
+        <p class="comment_notice">{% blocktrans %}Only registered users can leave comments{% endblocktrans %}</p>
+        <p><a href="{% url 'user_register' %}" class="inline_link">{% blocktrans %}Register{% endblocktrans %}</a> {% blocktrans %}to leave a comment or{% endblocktrans %} <a href="{% url 'login' %}" class="inline_link">{% blocktrans %}login{% endblocktrans %}</a> {% blocktrans %}to the site.{% endblocktrans %}</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
 {% endblock content %}
-

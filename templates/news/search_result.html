@@ -1,27 +1,40 @@
 {% extends 'news/base.html' %}
-{% load static %}
 {% load i18n %}
 
 {% block title %}{% blocktrans %}Search results{% endblocktrans %}{% endblock title %}
 
 {% block content %}
+<section class="category_page_section">
+  <div class="section_intro">
+    <span class="feature_chip">{% blocktrans %}Search results{% endblocktrans %}</span>
+    <h1>{% blocktrans %}Search results{% endblocktrans %}</h1>
+    {% if query %}
+    <p>{{ ui_text.search_news }}: <strong>{{ query }}</strong></p>
+    {% else %}
+    <p>{{ ui_text.latest_news }}</p>
+    {% endif %}
+  </div>
 
-    <h2>{% blocktrans %}Search results{% endblocktrans %}</h2>
-    <div class="card-deck container">
-        {% for news in all_news %}
-        <div class="card">
-            <img src="{{ news.image.url }}" class="card-img-top" alt="{{ news.title }}" width="30%">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{% url 'news_detail_page' news.slug %}" class="text-danger">{{ news.title }}</a>
-                </h5>
-                <span class="badge badge-primary">{{ news.category.name }}</span>
-            </div>
-            <div class="card-footer">
-                <small class="text-muted">{{ news.pub_date }}</small>
-            </div>
+  <div class="news_grid">
+    {% for news in all_news %}
+    <article class="news_grid_card">
+      <a href="{% url 'news_detail_page' news.slug %}" class="news_grid_image"><img src="{{ news.image.url }}" alt="{{ news.title }}"></a>
+      <div class="news_grid_body">
+        <span class="feature_chip">{{ news.category.name }}</span>
+        <h2><a href="{% url 'news_detail_page' news.slug %}">{{ news.title }}</a></h2>
+        <p>{{ news.body|truncatewords:28 }}</p>
+        <div class="news_grid_meta">
+          <span><i class="fa fa-clock-o"></i> {{ news.publish_time|date:"d M Y" }}</span>
         </div>
-        {% endfor %}
+      </div>
+    </article>
+    {% empty %}
+    <div class="empty_state_card">
+      <h3>{% blocktrans %}Search results{% endblocktrans %}</h3>
+      <p>{{ ui_text.no_search_results }}</p>
+      <a class="section_cta" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
     </div>
-
+    {% endfor %}
+  </div>
+</section>
 {% endblock content %}

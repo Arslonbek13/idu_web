@@ -3,16 +3,46 @@
 
 {% block title %}{% blocktrans %}Login Page{% endblocktrans %}{% endblock title %}
 
+{% block body_class %}body-auth{% endblock body_class %}
+
 {% block content %}
-     <h2>{% blocktrans %}Login{% endblocktrans %}</h2>
-     <p>{% blocktrans %}Please fill out the form below to enter the site.{% endblocktrans %}</p>
-     <h5>{% blocktrans %}If you forgot your password,{% endblocktrans %}<a href="{% url 'password_reset' %}" class="text-danger">{% blocktrans %}reset it{% endblocktrans %}</a></h5>
-     <form method="post">{% csrf_token %}
-          {{ form.as_p }}
-       <button type="submit" class="btn btn-primary">{% blocktrans %}Login{% endblocktrans %}</button>
-     </form>
-     <h4>{% blocktrans %}Don't have an account? {% endblocktrans %}<a href="{% url 'user_register' %}" class="text-danger">{% blocktrans %}Signup{% endblocktrans %}</a> </h4>
+<section class="auth_page_shell">
+    <div class="auth-container auth-container--narrow">
+        <div class="auth-header">
+            <h2>{% blocktrans %}Welcome Back{% endblocktrans %}</h2>
+            <p>{% blocktrans %}Log in to your account to continue.{% endblocktrans %}</p>
+        </div>
+
+        <form method="post" class="panel_form auth_form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="form_notice form_notice--error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            {% for field in form %}
+            <div class="auth-form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-text">{{ field.errors|striptags }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <a href="{% url 'password_reset' %}" class="forgot-pass inline_link">{% blocktrans %}Forgot password?{% endblocktrans %}</a>
+            
+            <button type="submit" class="auth-btn">
+                <i class="fa fa-sign-in"></i> {% blocktrans %}Login{% endblocktrans %}
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            {% blocktrans %}Don't have an account?{% endblocktrans %} 
+            <a href="{% url 'user_register' %}">{% blocktrans %}Sign up here{% endblocktrans %}</a>
+        </div>
+    </div>
+</section>
 {% endblock content %}
-
-
-

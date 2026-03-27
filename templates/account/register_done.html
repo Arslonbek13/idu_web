@@ -3,8 +3,15 @@
 {% load i18n %}
 {% block title %}{% blocktrans %}You have successfully registered.{% endblocktrans %}{% endblock title %}
 
+{% block body_class %}body-auth{% endblock body_class %}
+
 {% block content %}
-    <h1>{{ new_user.first_name }} {% blocktrans %}You have successfully registered.{% endblocktrans %}</h1>
-    <p>{% blocktrans %}You have successfully registered!{% endblocktrans %}</p>
-    <p>{% blocktrans %}You can {% endblocktrans %}<a href="{% url 'login' %}">{% blocktrans %}login{% endblocktrans %}</a> {% blocktrans %} to the site{% endblocktrans %}</p>
+<section class="utility_page_section utility_page_section--center">
+    <div class="utility_panel">
+        <span class="feature_chip">{% blocktrans %}Create Account{% endblocktrans %}</span>
+        <h1>{{ new_user.first_name }} {% blocktrans %}You have successfully registered.{% endblocktrans %}</h1>
+        <p>{% blocktrans %}You have successfully registered!{% endblocktrans %}</p>
+        <p>{% blocktrans %}You can {% endblocktrans %}<a href="{% url 'login' %}" class="inline_link">{% blocktrans %}login{% endblocktrans %}</a> {% blocktrans %} to the site{% endblocktrans %}</p>
+    </div>
+</section>
 {% endblock content %}

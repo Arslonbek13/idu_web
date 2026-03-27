@@ -3,302 +3,440 @@
 {% load hitcount_tags %}
 {% load i18n %}
 
-{% block title %} {% blocktrans %} Home Page {% endblocktrans %} {% endblock title %}
+{% block title %}{% trans "Home Page" %}{% endblock title %}
+
 {% block content %}
-  <section id="sliderSection">
-    <div class="row">
-      <div class="col-lg-8 col-md-8 col-sm-8">
-        <div class="slick_slider">
-           {% for news in news_list %}
-          <div class="single_iteam"> <a href="{{ news.get_absolute_url }}"> <img src="{{ news.image.url }}" alt=""></a>
-            <div class="slider_article">
-              <h2><a class="slider_tittle" href="{{ news.get_absolute_url }}">{{ news.title | truncatewords:5 }}</a></h2>
-              <p>{{ news.title }}</p>
-            </div>
+<section id="sliderSection" class="home_hero_section">
+  <div class="section_intro home_intro">
+    <span class="feature_chip">{{ ui_text.latest_news }}</span>
+    <h1>{{ ui_text.tagline }}</h1>
+    <p>{{ ui_text.footer_desc }}</p>
+    <div class="utility_actions">
+      <a class="section_cta" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+      <a class="section_cta section_cta_secondary" href="{% url 'contact_page' %}">{% blocktrans %}Contact Us{% endblocktrans %}</a>
+    </div>
+  </div>
+
+  <div class="row home_hero_row">
+    <div class="col-lg-8 col-md-8 col-sm-12">
+      {% if news_list %}
+      <div class="slick_slider hero_slider">
+        {% for news in news_list %}
+        <div class="single_iteam">
+          <a href="{{ news.get_absolute_url }}">
+            <img src="{{ news.image.url }}" alt="{{ news.title }}">
+          </a>
+          <div class="slider_article">
+            <span class="feature_chip">{{ news.category.name }}</span>
+            <h2><a class="slider_tittle" href="{{ news.get_absolute_url }}">{{ news.title|truncatewords:10 }}</a></h2>
+            <p>{{ news.body|truncatewords:24 }}</p>
           </div>
-          {% endfor %}
         </div>
+        {% endfor %}
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-4">
-        <div class="latest_post">
+      {% else %}
+      <div class="hero_empty_state premium_section">
+        <span class="feature_chip">{{ ui_text.latest_news }}</span>
+        <h2>{{ ui_text.empty_section }}</h2>
+        <a class="section_cta" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-4 col-md-4 col-sm-12">
+      <div class="latest_post premium_section">
+        <div class="section_heading_row latest_post_heading">
           <h2><span>{% blocktrans %}Latest post{% endblocktrans %}</span></h2>
-          <div class="latest_post_container">
-            <div id="prev-button"><i class="fa fa-chevron-up"></i></div>
-            <ul class="latest_postnav">
-              {% for news in news_list %}
-              <li>
-                <div class="media"> <a href="{{ news.get_absolute_url }}" class="media-left"> <img alt="" src="{{ news.image.url }}"> </a>
-                  <div class="media-body"> <a href="{{ news.get_absolute_url }}">{{ news.title | truncatewords:5 }}</a>
-                    <h6> {% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for news %} </h6>
-                  </div>
+          <a class="section_cta section_cta_secondary" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+        </div>
+
+        <div class="latest_post_container">
+          <button type="button" id="prev-button" class="latest_post_control latest_post_control_prev" aria-label="{% trans 'Previous latest posts' %}">
+            <i class="fa fa-chevron-up" aria-hidden="true"></i>
+          </button>
+
+          <ul class="latest_postnav">
+            {% for news in news_list %}
+            <li>
+              <div class="media">
+                <a href="{{ news.get_absolute_url }}" class="media-left">
+                  <img alt="{{ news.title }}" src="{{ news.image.url }}">
+                </a>
+                <div class="media-body">
+                  <a href="{{ news.get_absolute_url }}" class="catg_title">{{ news.title|truncatewords:9 }}</a>
+                  <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for news %}</h6>
                 </div>
-              </li>
-              {% endfor %}
-            </ul>
-            <div id="next-button"><i class="fa  fa-chevron-down"></i></div>
-          </div>
+              </div>
+            </li>
+            {% empty %}
+            <li>
+              <div class="empty_inline_state">
+                <p>{{ ui_text.empty_section }}</p>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <button type="button" id="next-button" class="latest_post_control latest_post_control_next" aria-label="{% trans 'Next latest posts' %}">
+            <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
     </div>
-  </section>
-  <section id="contentSection">
-    <div class="row">
-      <div class="col-lg-8 col-md-8 col-sm-8">
-        <div class="left_content">
-          <div class="single_post_content">
+  </div>
+</section>
+
+<section id="contentSection" class="home_content_section">
+  <div class="row">
+    <div class="col-lg-8 col-md-8 col-sm-12">
+      <div class="left_content">
+        <div class="single_post_content premium_section">
+          <div class="section_heading_row">
             <h2><span>{% blocktrans %}Local News{% endblocktrans %}</span></h2>
+            <a class="section_cta" href="{% url 'local_news_page' %}">{{ ui_text.explore_section }}</a>
+          </div>
+          {% if local_news %}
+          <div class="content_split">
             <div class="single_post_content_left">
-              <ul class="business_catgnav  wow fadeInDown">
-              {% for local in local_news %}
-                {% if forloop.first %}
-                <li>
-                  <figure class="bsbig_fig"> <a href="{{ local.get_absolute_url }}" class="featured_img"> <img alt="" src="{{ local.image.url }}"> <span class="overlay"></span> </a>
-                    <figcaption> <a href="{{ local.get_absolute_url }}">{{ local.title | truncatewords:5  }}</a> </figcaption>
-                    <p>{{ local.title }}</p>
-                    <h6> {% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for local %} </h6>
-                  </figure>
-                </li>
-                {% endif %}
-              {% endfor %}
-              </ul>
-            </div>
-            <div class="single_post_content_right">
-              <ul class="spost_nav">
-              {% for local in local_news %}
-                <li>
-                  <div class="media wow fadeInDown"> <a href="{{ local.get_absolute_url }}" class="media-left"> <img alt="" src="{{ local.image.url }}"> </a>
-                    <div class="media-body"> <a href="{{ local.get_absolute_url }}" class="catg_title">{{ local.title }}</a>
-                       <h6> {% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for local %} </h6>
-                    </div>
-                  </div>
-                </li>
-              {% endfor %}
-              </ul>
-            </div>
-          </div>
-          <div class="fashion_technology_area">
-            <div class="fashion">
-              <div class="single_post_content">
-                <h2><span>{% blocktrans %}World News{% endblocktrans %}</span></h2>
-                <ul class="business_catgnav wow fadeInDown">
-                {% for world in world %}
-                    {% if forloop.first %}
-                  <li>
-                    <figure class="bsbig_fig"> <a href="{{ world.get_absolute_url }}" class="featured_img"> <img alt="" src="{{ world.image.url }}"> <span class="overlay"></span> </a>
-                      <figcaption> <a href="{{ world.get_absolute_url }}">{{ world.title | truncatewords:5 }}</a> </figcaption>
-                      <p>{{ world.title }}</p>
-                      <h6> {% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for world %} </h6>
-                    </figure>
-                  </li>
-                    {% endif %}
-                {% endfor %}
-                </ul>
-                <ul class="spost_nav">
-                  {% for world in world %}
-                  <li>
-                    <div class="media wow fadeInDown"> <a href="{{ world.get_absolute_url }}" class="media-left"> <img alt="" src="{{ world.image.url }}"></a>
-                      <div class="media-body"> <a href="{{ world.get_absolute_url }}">{{ world.title }}</a>
-                         <h6>{% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for world %} </h6>
-                      </div>
-                    </div>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-            <div class="technology">
-              <div class="single_post_content">
-                <h2><span>{% blocktrans %}Technology{% endblocktrans %}</span></h2>
-                <ul class="business_catgnav">
-                  {% for technology in technology %}
-                     {% if forloop.first %}
-                  <li>
-                    <figure class="bsbig_fig wow fadeInDown"> <a href="{{ technology.get_absolute_url }}" class="featured_img"> <img alt="" src="{{ technology.image.url }}"> <span class="overlay"></span> </a>
-                      <figcaption> <a href="{{ technology.get_absolute_url }}">{{ technology.title | truncatewords:5 }}</a> </figcaption>
-                      <p>{{ technology.title }}</p>
-                      <h6> {% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for technology %} </h6>
-                    </figure>
-                  </li>
-                     {% endif %}
-                  {% endfor %}
-                </ul>
-                <ul class="spost_nav">
-                  {% for technology in technology %}
-                  <li>
-                    <div class="media wow fadeInDown"> <a href="{{ technology.get_absolute_url }}" class="media-left"> <img alt="" src="{{ technology.image.url }}"> </a>
-                      <div class="media-body"> <a href="{{ technology.get_absolute_url }}" class="catg_title">{{ technology.title }}</a>
-                         <h6> {% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for technology %} </h6>
-                      </div>
-                    </div>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="single_post_content">
-            <h2><span>{% blocktrans %}Photography{% endblocktrans %}</span></h2>
-            <ul class="photograph_nav  wow fadeInDown">
-              <li>
-                <div class="photo_grid">
-                  <figure class="effect-layla"> <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img2.jpg' %}" title="Photography Ttile 1"> <img src="{% static 'images/photograph_img2.jpg' %}" alt=""/></a> </figure>
-                </div>
-              </li>
-              <li>
-                <div class="photo_grid">
-                  <figure class="effect-layla"> <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img3.jpg' %}" title="Photography Ttile 2"> <img src="{% static 'images/photograph_img3.jpg' %}" alt=""/> </a> </figure>
-                </div>
-              </li>
-              <li>
-                <div class="photo_grid">
-                  <figure class="effect-layla"> <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img4.jpg' %}" title="Photography Ttile 3"> <img src="{% static 'images/photograph_img4.jpg' %}" alt=""/> </a> </figure>
-                </div>
-              </li>
-              <li>
-                <div class="photo_grid">
-                  <figure class="effect-layla"> <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img4.jpg' %}" title="Photography Ttile 4"> <img src="{% static 'images/photograph_img4.jpg' %}" alt=""/> </a> </figure>
-                </div>
-              </li>
-              <li>
-                <div class="photo_grid">
-                  <figure class="effect-layla"> <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img2.jpg' %}" title="Photography Ttile 5"> <img src="{% static 'images/photograph_img2.jpg' %}" alt=""/> </a> </figure>
-                </div>
-              </li>
-              <li>
-                <div class="photo_grid">
-                  <figure class="effect-layla"> <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img3.jpg' %}" title="Photography Ttile 6"> <img src="{% static 'images/photograph_img3.jpg' %}" alt=""/> </a> </figure>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <div class="single_post_content">
-            <h2><span>{% blocktrans %}Sport{% endblocktrans %}</span></h2>
-            <div class="single_post_content_left">
+              {% with featured=local_news.0 %}
               <ul class="business_catgnav">
-              {% for sport in sport %}
-                  {% if forloop.first %}
                 <li>
-                  <figure class="bsbig_fig  wow fadeInDown"> <a class="featured_img" href="{{ sport.get_absolute_url }}"> <img src="{{ sport.image.url }}" alt=""> <span class="overlay"></span> </a>
-                    <figcaption> <a href="{{ sport.get_absolute_url }}">{{ sport.title | truncatewords:5 }}</a> </figcaption>
-                    <p>{{ sport.title }}</p>
-                    <h6> {% blocktrans %}Views:{% endblocktrans %}<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for sport %} </h6>
+                  <figure class="bsbig_fig">
+                    <a href="{{ featured.get_absolute_url }}" class="featured_img">
+                      <img alt="{{ featured.title }}" src="{{ featured.image.url }}">
+                      <span class="overlay"></span>
+                    </a>
+                    <figcaption><a href="{{ featured.get_absolute_url }}">{{ featured.title|truncatewords:10 }}</a></figcaption>
+                    <p>{{ featured.body|truncatewords:22 }}</p>
+                    <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for featured %}</h6>
                   </figure>
                 </li>
-                  {% endif %}
-              {% endfor %}
               </ul>
+              {% endwith %}
             </div>
             <div class="single_post_content_right">
               <ul class="spost_nav">
-                {% for sport in sport %}
+                {% for local in local_news|slice:"1:" %}
                 <li>
-                  <div class="media wow fadeInDown"> <a href="{{ sport.get_absolute_url }}" class="media-left"> <img alt="" src="{{ sport.image.url }}"> </a>
-                    <div class="media-body"> <a href="{{ sport.get_absolute_url }}" class="catg_title">{{ sport.title }}</a>
-                       <h6> Views:<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for sport %} </h6>
+                  <div class="media">
+                    <a href="{{ local.get_absolute_url }}" class="media-left">
+                      <img alt="{{ local.title }}" src="{{ local.image.url }}">
+                    </a>
+                    <div class="media-body">
+                      <a href="{{ local.get_absolute_url }}" class="catg_title">{{ local.title }}</a>
+                      <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for local %}</h6>
                     </div>
+                  </div>
+                </li>
+                {% empty %}
+                <li>
+                  <div class="empty_inline_state">
+                    <p>{{ ui_text.empty_section }}</p>
                   </div>
                 </li>
                 {% endfor %}
               </ul>
+            </div>
+          </div>
+          {% else %}
+          <div class="empty_inline_state">
+            <p>{{ ui_text.empty_section }}</p>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="fashion_technology_area">
+          <div class="fashion">
+            <div class="single_post_content premium_section">
+              <div class="section_heading_row">
+                <h2><span>{% blocktrans %}World News{% endblocktrans %}</span></h2>
+                <a class="section_cta" href="{% url 'world_news_page' %}">{{ ui_text.explore_section }}</a>
+              </div>
+              {% if world %}
+              {% with featured=world.0 %}
+              <ul class="business_catgnav">
+                <li>
+                  <figure class="bsbig_fig">
+                    <a href="{{ featured.get_absolute_url }}" class="featured_img">
+                      <img alt="{{ featured.title }}" src="{{ featured.image.url }}">
+                      <span class="overlay"></span>
+                    </a>
+                    <figcaption><a href="{{ featured.get_absolute_url }}">{{ featured.title|truncatewords:9 }}</a></figcaption>
+                    <p>{{ featured.body|truncatewords:18 }}</p>
+                    <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for featured %}</h6>
+                  </figure>
+                </li>
+              </ul>
+              {% endwith %}
+              <ul class="spost_nav">
+                {% for world_item in world|slice:"1:" %}
+                <li>
+                  <div class="media">
+                    <a href="{{ world_item.get_absolute_url }}" class="media-left">
+                      <img alt="{{ world_item.title }}" src="{{ world_item.image.url }}">
+                    </a>
+                    <div class="media-body">
+                      <a href="{{ world_item.get_absolute_url }}" class="catg_title">{{ world_item.title }}</a>
+                      <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for world_item %}</h6>
+                    </div>
+                  </div>
+                </li>
+                {% empty %}
+                <li>
+                  <div class="empty_inline_state">
+                    <p>{{ ui_text.empty_section }}</p>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <div class="empty_inline_state">
+                <p>{{ ui_text.empty_section }}</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="technology">
+            <div class="single_post_content premium_section">
+              <div class="section_heading_row">
+                <h2><span>{% blocktrans %}Technology{% endblocktrans %}</span></h2>
+                <a class="section_cta" href="{% url 'technology_news_page' %}">{{ ui_text.explore_section }}</a>
+              </div>
+              {% if technology %}
+              {% with featured=technology.0 %}
+              <ul class="business_catgnav">
+                <li>
+                  <figure class="bsbig_fig">
+                    <a href="{{ featured.get_absolute_url }}" class="featured_img">
+                      <img alt="{{ featured.title }}" src="{{ featured.image.url }}">
+                      <span class="overlay"></span>
+                    </a>
+                    <figcaption><a href="{{ featured.get_absolute_url }}">{{ featured.title|truncatewords:9 }}</a></figcaption>
+                    <p>{{ featured.body|truncatewords:18 }}</p>
+                    <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for featured %}</h6>
+                  </figure>
+                </li>
+              </ul>
+              {% endwith %}
+              <ul class="spost_nav">
+                {% for technology_item in technology|slice:"1:" %}
+                <li>
+                  <div class="media">
+                    <a href="{{ technology_item.get_absolute_url }}" class="media-left">
+                      <img alt="{{ technology_item.title }}" src="{{ technology_item.image.url }}">
+                    </a>
+                    <div class="media-body">
+                      <a href="{{ technology_item.get_absolute_url }}" class="catg_title">{{ technology_item.title }}</a>
+                      <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for technology_item %}</h6>
+                    </div>
+                  </div>
+                </li>
+                {% empty %}
+                <li>
+                  <div class="empty_inline_state">
+                    <p>{{ ui_text.empty_section }}</p>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              <div class="empty_inline_state">
+                <p>{{ ui_text.empty_section }}</p>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-4">
-        <aside class="right_content">
-          <div class="single_sidebar">
-            <h2><span>{% blocktrans %}Popular Post{% endblocktrans %}</span></h2>
-            <ul class="spost_nav">
-              <li>
-                <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
-                  <div class="media-body"> <a href="pages/single_page.html" class="catg_title"> {% blocktrans %}Aliquam malesuada diam eget turpis varius 1{% endblocktrans %}</a> </div>
-                </div>
-              </li>
-              <li>
-                <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
-                  <div class="media-body"> <a href="pages/single_page.html" class="catg_title"> {% blocktrans %}Aliquam malesuada diam eget turpis varius 2{% endblocktrans %}</a> </div>
-                </div>
-              </li>
-              <li>
-                <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
-                  <div class="media-body"> <a href="pages/single_page.html" class="catg_title">{% blocktrans %} Aliquam malesuada diam eget turpis varius 3{% endblocktrans %}</a> </div>
-                </div>
-              </li>
-              <li>
-                <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
-                  <div class="media-body"> <a href="pages/single_page.html" class="catg_title"> {% blocktrans %}Aliquam malesuada diam eget turpis varius 4{% endblocktrans %}</a> </div>
-                </div>
-              </li>
-            </ul>
+
+        <div class="single_post_content premium_section">
+          <div class="section_heading_row">
+            <h2><span>{% blocktrans %}Photography{% endblocktrans %}</span></h2>
+            <a class="section_cta" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
           </div>
-          <div class="single_sidebar">
-            <ul class="nav nav-tabs" role="tablist">
-              <li role="presentation" class="active"><a href="#category" aria-controls="home" role="tab" data-toggle="tab">{% blocktrans %}Category{% endblocktrans %}</a></li>
-              <li role="presentation"><a href="#video" aria-controls="profile" role="tab" data-toggle="tab">{% blocktrans %}Video{% endblocktrans %}</a></li>
-              <li role="presentation"><a href="#comments" aria-controls="messages" role="tab" data-toggle="tab">{% blocktrans %}Comments{% endblocktrans %}</a></li>
-            </ul>
-            <div class="tab-content">
-              <div role="tabpanel" class="tab-pane active" id="category">
-                <ul>
-                  {% for category in categories %}
-                  <li class="cat-item"><a href="{{ categories.get_absolute_url }}">{{ category.name }}</a></li>
-                  {% endfor %}
-                </ul>
+          <ul class="photograph_nav">
+            <li>
+              <div class="photo_grid">
+                <figure class="effect-layla">
+                  <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img2.jpg' %}" title="Photography">
+                    <img src="{% static 'images/photograph_img2.jpg' %}" alt="Photography">
+                  </a>
+                </figure>
               </div>
-              <div role="tabpanel" class="tab-pane" id="video">
-                <div class="vide_area">
-                  <iframe width="100%" height="250" src="http://www.youtube.com/embed/h5QWbURNEpA?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
-                </div>
+            </li>
+            <li>
+              <div class="photo_grid">
+                <figure class="effect-layla">
+                  <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img3.jpg' %}" title="Photography">
+                    <img src="{% static 'images/photograph_img3.jpg' %}" alt="Photography">
+                  </a>
+                </figure>
               </div>
-              <div role="tabpanel" class="tab-pane" id="comments">
-                <ul class="spost_nav">
-                  <li>
-                    <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
-                      <div class="media-body"> <a href="pages/single_page.html" class="catg_title"> {% blocktrans %}Aliquam malesuada diam eget turpis varius 1{% endblocktrans %}</a> </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
-                      <div class="media-body"> <a href="pages/single_page.html" class="catg_title"> {% blocktrans %}Aliquam malesuada diam eget turpis varius 2{% endblocktrans %}</a> </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
-                      <div class="media-body"> <a href="pages/single_page.html" class="catg_title"> {% blocktrans %}Aliquam malesuada diam eget turpis varius 3{% endblocktrans %}</a> </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="media wow fadeInDown"> <a href="pages/single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
-                      <div class="media-body"> <a href="pages/single_page.html" class="catg_title"> {% blocktrans %}Aliquam malesuada diam eget turpis varius 4{% endblocktrans %}</a> </div>
-                    </div>
-                  </li>
-                </ul>
+            </li>
+            <li>
+              <div class="photo_grid">
+                <figure class="effect-layla">
+                  <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img4.jpg' %}" title="Photography">
+                    <img src="{% static 'images/photograph_img4.jpg' %}" alt="Photography">
+                  </a>
+                </figure>
               </div>
+            </li>
+            <li>
+              <div class="photo_grid">
+                <figure class="effect-layla">
+                  <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img4.jpg' %}" title="Photography">
+                    <img src="{% static 'images/photograph_img4.jpg' %}" alt="Photography">
+                  </a>
+                </figure>
+              </div>
+            </li>
+            <li>
+              <div class="photo_grid">
+                <figure class="effect-layla">
+                  <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img2.jpg' %}" title="Photography">
+                    <img src="{% static 'images/photograph_img2.jpg' %}" alt="Photography">
+                  </a>
+                </figure>
+              </div>
+            </li>
+            <li>
+              <div class="photo_grid">
+                <figure class="effect-layla">
+                  <a class="fancybox-buttons" data-fancybox-group="button" href="{% static 'images/photograph_img3.jpg' %}" title="Photography">
+                    <img src="{% static 'images/photograph_img3.jpg' %}" alt="Photography">
+                  </a>
+                </figure>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="single_post_content premium_section">
+          <div class="section_heading_row">
+            <h2><span>{% blocktrans %}Sport{% endblocktrans %}</span></h2>
+            <a class="section_cta" href="{% url 'sport_news_page' %}">{{ ui_text.explore_section }}</a>
+          </div>
+          {% if sport %}
+          <div class="content_split">
+            <div class="single_post_content_left">
+              {% with featured=sport.0 %}
+              <ul class="business_catgnav">
+                <li>
+                  <figure class="bsbig_fig">
+                    <a class="featured_img" href="{{ featured.get_absolute_url }}">
+                      <img src="{{ featured.image.url }}" alt="{{ featured.title }}">
+                      <span class="overlay"></span>
+                    </a>
+                    <figcaption><a href="{{ featured.get_absolute_url }}">{{ featured.title|truncatewords:10 }}</a></figcaption>
+                    <p>{{ featured.body|truncatewords:18 }}</p>
+                    <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for featured %}</h6>
+                  </figure>
+                </li>
+              </ul>
+              {% endwith %}
+            </div>
+            <div class="single_post_content_right">
+              <ul class="spost_nav">
+                {% for sport_item in sport|slice:"1:" %}
+                <li>
+                  <div class="media">
+                    <a href="{{ sport_item.get_absolute_url }}" class="media-left">
+                      <img alt="{{ sport_item.title }}" src="{{ sport_item.image.url }}">
+                    </a>
+                    <div class="media-body">
+                      <a href="{{ sport_item.get_absolute_url }}" class="catg_title">{{ sport_item.title }}</a>
+                      <h6>{% blocktrans %}Views:{% endblocktrans %} <i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for sport_item %}</h6>
+                    </div>
+                  </div>
+                </li>
+                {% empty %}
+                <li>
+                  <div class="empty_inline_state">
+                    <p>{{ ui_text.empty_section }}</p>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
             </div>
           </div>
-          <div class="single_sidebar wow fadeInDown">
-            <h2><span>{% blocktrans %}Sponsor{% endblocktrans %}</span></h2>
-            <a class="sideAdd" href="#"><img src="{% static 'images/add_img.jpg' %}" alt=""></a> </div>
-          <div class="single_sidebar wow fadeInDown">
-            <h2><span>{% blocktrans %}Category Archive{% endblocktrans %}</span></h2>
-            <select class="catgArchive">
-              <option>{% blocktrans %}Select Category{% endblocktrans %}</option>
-              {% for category in categories %}
-              <option>{{ category.name }}</option>
-              {% endfor %}
-            </select>
+          {% else %}
+          <div class="empty_inline_state">
+            <p>{{ ui_text.empty_section }}</p>
           </div>
-          <div class="single_sidebar wow fadeInDown">
-            <h2><span>{% blocktrans %}Links{% endblocktrans %}</span></h2>
-            <ul>
-              <li><a href="#">{% blocktrans %}Blog{% endblocktrans %}</a></li>
-              <li><a href="#">{% blocktrans %}Rss Feed{% endblocktrans %}</a></li>
-              <li><a href="#">{% blocktrans %}Login{% endblocktrans %}</a></li>
-              <li><a href="#">{% blocktrans %}Life &amp; Style{% endblocktrans %}</a></li>
-            </ul>
-          </div>
-        </aside>
+          {% endif %}
+        </div>
       </div>
     </div>
-  </section>
+
+    <div class="col-lg-4 col-md-4 col-sm-12">
+      <aside class="right_content">
+        <div class="single_sidebar premium_section">
+          <div class="section_heading_row compact_heading">
+            <h2><span>{% blocktrans %}Popular Post{% endblocktrans %}</span></h2>
+            <a class="section_cta section_cta_secondary" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+          </div>
+          <ul class="spost_nav">
+            {% for article in sidebar_news %}
+            <li>
+              <div class="media">
+                <a href="{{ article.get_absolute_url }}" class="media-left">
+                  <img alt="{{ article.title }}" src="{{ article.image.url }}">
+                </a>
+                <div class="media-body">
+                  <a href="{{ article.get_absolute_url }}" class="catg_title">{{ article.title }}</a>
+                </div>
+              </div>
+            </li>
+            {% empty %}
+            <li>
+              <div class="empty_inline_state">
+                <p>{{ ui_text.empty_section }}</p>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="single_sidebar premium_section">
+          <div class="section_heading_row compact_heading">
+            <h2><span>{% blocktrans %}Video{% endblocktrans %}</span></h2>
+          </div>
+          <div class="video_embed">
+            <iframe src="https://www.youtube.com/embed/h5QWbURNEpA?feature=player_detailpage" title="News video" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <div class="single_sidebar premium_section">
+          <div class="section_heading_row compact_heading">
+            <h2><span>{% blocktrans %}Category{% endblocktrans %}</span></h2>
+            <a class="section_cta section_cta_secondary" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+          </div>
+          <ul class="tag_nav tag_nav--grid">
+            {% for category in categories %}
+            <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+            {% empty %}
+            <li class="empty_inline_state">
+              <p>{{ ui_text.empty_section }}</p>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="single_sidebar premium_section info_sidebar_card">
+          <div class="section_heading_row compact_heading">
+            <h2><span>{% blocktrans %}Links{% endblocktrans %}</span></h2>
+          </div>
+          <p class="sidebar_copy">{{ ui_text.footer_desc }}</p>
+          <ul class="sidebar_link_list">
+            <li><a href="{% url 'all_news_list' %}">{{ ui_text.latest_news }}</a></li>
+            <li><a href="{% url 'local_news_page' %}">{% blocktrans %}Local News{% endblocktrans %}</a></li>
+            <li><a href="{% url 'technology_news_page' %}">{% blocktrans %}Technology{% endblocktrans %}</a></li>
+            <li><a href="{% url 'contact_page' %}">{% blocktrans %}Contact Us{% endblocktrans %}</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
 {% endblock content %}

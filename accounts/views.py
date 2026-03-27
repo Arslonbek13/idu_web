@@ -1,20 +1,17 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 
 from news_app.models import Category
 from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditForm
 from .models import Profile
-from django.core.exceptions import ObjectDoesNotExist
 
 
 
 def user_login(request):
-    global categories
+    categories = Category.objects.all()
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -32,11 +29,9 @@ def user_login(request):
                 return HttpResponse('There is an error in the login or password')
     else:
         form = LoginForm()
-        categories = Category.objects.all()
     context = {
         'form': form,
-        'categories': categories
-
+        'categories': categories,
     }
     return render(request, 'registration/login.html', context)
 

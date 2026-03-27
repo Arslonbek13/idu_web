@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView, PasswordResetView, PasswordResetConfirmView, PasswordResetDoneView, PasswordResetCompleteView
-from .views import user_login, dashboard_view, user_register, UserRegistrationForm, edit_user
+from .views import dashboard_view, user_register, edit_user
 
 urlpatterns = [
     # path('login/', user_login, name='login'),

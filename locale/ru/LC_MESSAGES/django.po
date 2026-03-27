@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -80,10 +79,8 @@ msgstr "Вы можете "
 #: .\templates\account\register_done.html:9
 #: .\templates\news\news_detail.html:53
 #: .\templates\registration\password_reset_complete.html:8
-#, fuzzy
-#| msgid "Login"
 msgid "login"
-msgstr "Авторизоваться"
+msgstr "войти"
 
 #: .\templates\account\register_done.html:9
 msgid " to the site"
@@ -91,10 +88,8 @@ msgstr " на сайт"
 
 #: .\templates\crud\news_create.html:5 .\templates\crud\news_create.html:8
 #: .\templates\crud\news_create.html:11
-#, fuzzy
-#| msgid "World News"
 msgid "Add News"
-msgstr "Мировые новости"
+msgstr "Добавить новость"
 
 #: .\templates\crud\news_delete.html:8
 msgid "Delete News"
@@ -109,20 +104,12 @@ msgid "Delete"
 msgstr "Удалить"
 
 #: .\templates\crud\news_edit.html:8
-#, fuzzy
-#| msgid "World News"
 msgid "Edit News"
-msgstr "Мировые новости"
+msgstr "Редактировать новость"
 
 #: .\templates\crud\news_edit.html:11 .\templates\news\news_detail.html:19
 msgid "Edit"
 msgstr "Редактировать"
-
-#: .\templates\news\404.html:5
-#, fuzzy
-#| msgid " Home Page "
-msgid " 404 Page "
-msgstr "Домашняя страница"
 
 #: .\templates\news\404.html:12
 msgid "We Are Sorry"
@@ -174,27 +161,19 @@ msgstr "Войти на сайт"
 
 #: .\templates\news\base.html:100 .\templates\news\index.html:49
 #: .\templates\news\local.html:6
-#, fuzzy
-#| msgid "Local News"
 msgid "Local News"
-msgstr "Новости местных событий"
+msgstr "Местные новости"
 
 #: .\templates\news\base.html:101 .\templates\news\index.html:82
 #: .\templates\news\world.html:6
-#, fuzzy
-#| msgid "World News"
 msgid "World News"
-msgstr "Всемирные новости"
+msgstr "Мировые новости"
 
 #: .\templates\news\base.html:102 .\templates\news\index.html:111
-#, fuzzy
-#| msgid "Technology"
 msgid "Technology"
 msgstr "Технологии"
 
 #: .\templates\news\base.html:103 .\templates\news\index.html:175
-#, fuzzy
-#| msgid "Sport"
 msgid "Sport"
 msgstr "Спорт"
 
@@ -211,30 +190,16 @@ msgid "404 Page"
 msgstr "Страница 404"
 
 #: .\templates\news\base.html:127
-#, fuzzy
-#| msgid "Delete News"
 msgid "Latest News"
-msgstr "Удалить новость"
+msgstr "Последние новости"
 
 #: .\templates\news\base.html:159
 msgid "Flickr Images"
 msgstr "Изображения Flickr"
 
-#: .\templates\news\contact.html:5
-#, fuzzy
-#| msgid "Contact Us"
-msgid " Contact Page "
-msgstr "Свяжитесь с нами"
-
-#: .\templates\news\index.html:6
-#, fuzzy
-#| msgid " Home Page "
-msgid " Home Page "
-msgstr "Домашняя страница"
-
 #: .\templates\news\index.html:24
 msgid "Latest post"
-msgstr "Последний пост"
+msgstr "Последние публикации"
 
 #: .\templates\news\index.html:32 .\templates\news\index.html:58
 #: .\templates\news\index.html:71 .\templates\news\index.html:90
@@ -446,16 +411,12 @@ msgid "You have left the site."
 msgstr "Вы покинули сайт."
 
 #: .\templates\registration\logged_out.html:8
-#, fuzzy
-#| msgid "Login"
 msgid "Re-Login"
-msgstr "Авторизоваться"
+msgstr "Войти снова"
 
 #: .\templates\registration\login.html:4
-#, fuzzy
-#| msgid "Login"
 msgid "Login Page"
-msgstr "Авторизоваться"
+msgstr "Страница входа"
 
 #: .\templates\registration\login.html:8
 msgid "Please fill out the form below to enter the site."
@@ -550,3 +511,87 @@ msgstr "Введите свой адрес электронной почты, ч
 #: .\templates\registration\password_reset_form.html:11
 msgid "Send Email"
 msgstr "Отправить письмо на почту"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "Go"
+msgstr "Перейти"
+
+msgid "Daily reporting across local, world, technology, and sport."
+msgstr "Ежедневные новости о местных событиях, мире, технологиях и спорте."
+
+msgid "Search news"
+msgstr "Поиск новостей"
+
+msgid "Daily reporting on the stories shaping Uzbekistan and the wider world."
+msgstr "Ежедневно рассказываем о событиях, которые формируют Узбекистан и весь мир."
+
+msgid "Open contact page"
+msgstr "Открыть страницу контактов"
+
+msgid "Developed by Arslonbek"
+msgstr "Разработано Арслонбеком"
+
+msgid "Explore section"
+msgstr "Перейти в раздел"
+
+msgid "Browse news"
+msgstr "Смотреть новости"
+
+msgid "Daily coverage from communities, cities, and regions."
+msgstr "Ежедневные материалы из сообществ, городов и регионов."
+
+msgid "There are no published stories in this section yet."
+msgstr "В этом разделе пока нет опубликованных материалов."
+
+msgid "Global developments, diplomacy, and major international headlines."
+msgstr "Глобальные события, дипломатия и главные международные новости."
+
+msgid "Product launches, innovation, digital tools, and industry analysis."
+msgstr "Запуски продуктов, инновации, цифровые инструменты и аналитика отрасли."
+
+msgid "Matches, athletes, tournaments, and standout performances."
+msgstr "Матчи, спортсмены, турниры и яркие выступления."
+
+msgid "Use the form below to send feedback, partnership requests, or editorial questions."
+msgstr "Используйте форму ниже, чтобы отправить отзыв, запрос на сотрудничество или вопрос редакции."
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Message"
+msgstr "Сообщение"
+
+msgid "Send Message"
+msgstr "Отправить сообщение"
+
+msgid "Go to home page"
+msgstr "Перейти на главную"
+
+msgid "There are no published stories matching your search yet."
+msgstr "Пока нет опубликованных материалов, соответствующих вашему запросу."
+
+msgid "Home Page"
+msgstr "Главная страница"
+
+msgid "Contact Page"
+msgstr "Страница контактов"
+
+msgid "Toggle navigation"
+msgstr "Переключить навигацию"
+
+msgid "NewsFeed logo"
+msgstr "Логотип NewsFeed"
+
+msgid "Featured news banner"
+msgstr "Баннер главных новостей"
+
+msgid "Previous latest posts"
+msgstr "Предыдущие последние публикации"
+
+msgid "Next latest posts"
+msgstr "Следующие последние публикации"

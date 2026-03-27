@@ -513,3 +513,65 @@ msgstr "Parolingizni tiklash uchun elektron pochtangizni kiriting"
 #: .\templates\registration\password_reset_form.html:11
 msgid "Send Email"
 msgstr "Emailga xat yuborish"
+msgid "Language"
+msgstr "Til"
+
+msgid "Go"
+msgstr "O'tish"
+
+msgid "Daily reporting across local, world, technology, and sport."
+msgstr "Mahalliy, dunyo, texnologiya va sport yangiliklari har kuni yoritiladi."
+
+msgid "Search news"
+msgstr "Yangiliklarni qidirish"
+
+msgid "Daily reporting on the stories shaping Uzbekistan and the wider world."
+msgstr "O'zbekiston va butun dunyodagi muhim voqealarni har kuni yoritamiz."
+
+msgid "Open contact page"
+msgstr "Bog'lanish sahifasini ochish"
+
+msgid "Developed by Arslonbek"
+msgstr "Arslonbek tomonidan ishlab chiqilgan"
+
+msgid "Explore section"
+msgstr "Bo'limni ko'rish"
+
+msgid "Browse news"
+msgstr "Yangiliklarni ko'rish"
+
+msgid "Daily coverage from communities, cities, and regions."
+msgstr "Hududlar, shaharlar va jamoalardagi voqealar har kuni yoritiladi."
+
+msgid "There are no published stories in this section yet."
+msgstr "Bu bo'limda hali chop etilgan materiallar yo'q."
+
+msgid "Global developments, diplomacy, and major international headlines."
+msgstr "Global voqealar, diplomatiya va muhim xalqaro yangiliklar."
+
+msgid "Product launches, innovation, digital tools, and industry analysis."
+msgstr "Yangi mahsulotlar, innovatsiyalar, raqamli vositalar va soha tahlillari."
+
+msgid "Matches, athletes, tournaments, and standout performances."
+msgstr "Uchrashuvlar, sportchilar, turnirlar va yorqin natijalar."
+
+msgid "Use the form below to send feedback, partnership requests, or editorial questions."
+msgstr "Fikr-mulohaza, hamkorlik so'rovi yoki tahririyat savollarini yuborish uchun quyidagi formadan foydalaning."
+
+msgid "Name"
+msgstr "Ism"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Message"
+msgstr "Xabar"
+
+msgid "Send Message"
+msgstr "Xabar yuborish"
+
+msgid "Go to home page"
+msgstr "Bosh sahifaga o'tish"
+
+msgid "There are no published stories matching your search yet."
+msgstr "Qidiruvingizga mos chop etilgan materiallar hali topilmadi."

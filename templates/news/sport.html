@@ -1,24 +1,37 @@
 {% extends 'news/base.html' %}
-{% load static %}
 {% load hitcount_tags %}
 {% load i18n %}
 
 {% block title %}{% blocktrans %}Sport News{% endblocktrans %}{% endblock title %}
 
 {% block content %}
-
-     {% for news in sport %}
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6">
-                  <a href="{{news.get_absolute_url}}">
-                    <img src="{{ news.image.url }}" alt="{{ news.title }}" style="width:100%">
-                    <h2 style="border-bottom: 2px solid #ccc; padding-bottom: 20px; font-size: 24px;">{{news.title}}</h2>
-                    <h6> Views:<i class="fa fa-eye" aria-hidden="true"></i> {% get_hit_count for news %} </h6>
-                  </a>
-                </div>
-            </div>
+<section class="category_page_section">
+  <div class="section_intro">
+    <span class="feature_chip">{% blocktrans %}Sport{% endblocktrans %}</span>
+    <h1>{% blocktrans %}Sport News{% endblocktrans %}</h1>
+    <p>{{ ui_text.sport_intro }}</p>
+  </div>
+  <div class="news_grid">
+    {% for news in sport_news %}
+    <article class="news_grid_card">
+      <a href="{{ news.get_absolute_url }}" class="news_grid_image"><img src="{{ news.image.url }}" alt="{{ news.title }}"></a>
+      <div class="news_grid_body">
+        <span class="feature_chip">{{ news.category.name }}</span>
+        <h2><a href="{{ news.get_absolute_url }}">{{ news.title }}</a></h2>
+        <p>{{ news.body|truncatewords:28 }}</p>
+        <div class="news_grid_meta">
+          <span><i class="fa fa-clock-o"></i> {{ news.publish_time|date:"d M Y" }}</span>
+          <span><i class="fa fa-eye"></i> {% blocktrans %}Views:{% endblocktrans %} {% get_hit_count for news %}</span>
         </div>
-     {% endfor %}
-
+      </div>
+    </article>
+    {% empty %}
+    <div class="empty_state_card">
+      <h3>{{ ui_text.latest_news }}</h3>
+      <p>{{ ui_text.empty_section }}</p>
+      <a class="section_cta" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
 {% endblock content %}

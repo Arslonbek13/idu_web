@@ -1,54 +1,102 @@
 {% extends 'news/base.html' %}
-{% load static %}
 {% load i18n %}
 
-{% block title %}{% blocktrans %} Contact Page {% endblocktrans %}{% endblock title %}
+{% block title %}{% trans "Contact Page" %}{% endblock title %}
+
 {% block content %}
-  <section id="contentSection">
-    <div class="row">
-      <div class="col-lg-8 col-md-8 col-sm-8">
-        <div class="left_content">
-          <div class="contact_area">
-            <h2>{% blocktrans %}Contact Us{% endblocktrans %}</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labolore magna aliqua. Ut enim ad minim veniam. Lorem ipsum dosectetur adipisicing elit, sed do.Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-            <form action="#" class="contact_form" method="post">{% csrf_token %}
-              <input class="form-control" type="text" placeholder="Name*" name="name">
-              <input class="form-control" type="email" placeholder="Email*" name="email">
-              <textarea class="form-control" cols="30" rows="10" placeholder="Message*" name="message"></textarea>
-              <input type="submit" value="Send Message">
-            </form>
-          </div>
+<section id="contentSection" class="utility_page_section">
+  <div class="row contact_layout">
+    <div class="col-lg-8 col-md-8 col-sm-8">
+      <div class="single_post_content premium_section contact_area_card">
+        <div class="section_intro section_intro_left">
+          <span class="feature_chip">{% blocktrans %}Contact Us{% endblocktrans %}</span>
+          <h1>{% blocktrans %}Contact Us{% endblocktrans %}</h1>
+          <p>{{ ui_text.contact_intro }}</p>
         </div>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-4">
-        <aside class="right_content">
-          <div class="single_sidebar">
-            <h2><span>{% blocktrans %}Popular Post{% endblocktrans %}</span></h2>
-            <ul class="spost_nav">
-              <li>
-                <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
-                  <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 1</a> </div>
-                </div>
-              </li>
-              <li>
-                <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
-                  <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 2</a> </div>
-                </div>
-              </li>
-              <li>
-                <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img1.jpg' %}"> </a>
-                  <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 3</a> </div>
-                </div>
-              </li>
-              <li>
-                <div class="media wow fadeInDown"> <a href="single_page.html" class="media-left"> <img alt="" src="{% static 'images/post_img2.jpg' %}"> </a>
-                  <div class="media-body"> <a href="single_page.html" class="catg_title"> Aliquam malesuada diam eget turpis varius 4</a> </div>
-                </div>
-              </li>
-            </ul>
+
+        <form action="{% url 'contact_page' %}" class="contact_form" method="post">{% csrf_token %}
+          {% if form.non_field_errors %}
+          <div class="form_notice form_notice--error">
+            {{ form.non_field_errors }}
           </div>
-        </aside>
+          {% endif %}
+
+          <div class="contact_form_group">
+            <label for="contact-name">{{ ui_text.name }}</label>
+            <input id="contact-name" class="form-control" type="text" placeholder="{{ ui_text.name }}" name="name" value="{{ form.name.value|default:'' }}">
+            {% if form.name.errors %}
+            <div class="error-text">{{ form.name.errors|striptags }}</div>
+            {% endif %}
+          </div>
+
+          <div class="contact_form_group">
+            <label for="contact-email">{{ ui_text.email }}</label>
+            <input id="contact-email" class="form-control" type="email" placeholder="{{ ui_text.email }}" name="email" value="{{ form.email.value|default:'' }}">
+            {% if form.email.errors %}
+            <div class="error-text">{{ form.email.errors|striptags }}</div>
+            {% endif %}
+          </div>
+
+          <div class="contact_form_group">
+            <label for="contact-message">{{ ui_text.message }}</label>
+            <textarea id="contact-message" class="form-control" cols="30" rows="10" placeholder="{{ ui_text.message }}" name="message">{{ form.message.value|default:'' }}</textarea>
+            {% if form.message.errors %}
+            <div class="error-text">{{ form.message.errors|striptags }}</div>
+            {% endif %}
+          </div>
+
+          <input type="submit" value="{{ ui_text.send_message }}">
+        </form>
       </div>
     </div>
-  </section>
+    <div class="col-lg-4 col-md-4 col-sm-4">
+      <aside class="right_content">
+        <div class="single_sidebar premium_section contact_info_card">
+          <div class="section_heading_row compact_heading">
+            <h2><span>{% blocktrans %}Contact{% endblocktrans %}</span></h2>
+          </div>
+          <p class="sidebar_copy">{{ ui_text.footer_desc }}</p>
+          <ul class="contact_info_list">
+            <li>
+              <span>{% blocktrans %}Location{% endblocktrans %}</span>
+              <strong>Tashkent, Uzbekistan</strong>
+            </li>
+            <li>
+              <span>{% blocktrans %}Phone{% endblocktrans %}</span>
+              <strong>+998 93 696 69 13</strong>
+            </li>
+            <li>
+              <span>{% blocktrans %}Coverage{% endblocktrans %}</span>
+              <strong>{{ ui_text.tagline }}</strong>
+            </li>
+          </ul>
+          <a class="section_cta section_cta_secondary" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+        </div>
+
+        <div class="single_sidebar premium_section">
+          <div class="section_heading_row compact_heading">
+            <h2><span>{% blocktrans %}Popular Post{% endblocktrans %}</span></h2>
+            <a class="section_cta" href="{% url 'all_news_list' %}">{{ ui_text.browse_news }}</a>
+          </div>
+          <ul class="spost_nav">
+            {% for article in sidebar_news %}
+            <li>
+              <div class="media">
+                <a href="{{ article.get_absolute_url }}" class="media-left"><img alt="{{ article.title }}" src="{{ article.image.url }}"></a>
+                <div class="media-body"><a href="{{ article.get_absolute_url }}" class="catg_title">{{ article.title }}</a></div>
+              </div>
+            </li>
+            {% empty %}
+            <li>
+              <div class="empty_inline_state">
+                <p>{{ ui_text.empty_section }}</p>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
 {% endblock content %}

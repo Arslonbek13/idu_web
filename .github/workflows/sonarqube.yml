@@ -1,0 +1,53 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  sonarqube:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Full history required for accurate blame/SCM data
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pylint bandit
+
+      - name: Generate pylint report
+        run: |
+          pylint accounts/ news_app/ news_2/ manage.py \
+            --output-format=text \
+            --exit-zero \
+            > pylint-report.txt || true
+
+      # Uncomment once tests are written:
+      # - name: Run tests with coverage
+      #   run: |
+      #     pip install coverage
+      #     coverage run manage.py test
+      #     coverage xml -o coverage.xml
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
