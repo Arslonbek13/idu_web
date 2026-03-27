@@ -12,7 +12,7 @@
         <div class="profile-header">
             <div class="profile-avatar-wrap">
                 {% if profile.photo %}
-                    <img src="{{ profile.photo.url }}" alt="Profile Photo">
+                    <img src="{{ profile.photo.url }}" alt="{% trans 'User avatar' %}">
                 {% else %}
                     <div class="profile-avatar-placeholder">
                         <i class="fa fa-user"></i>
@@ -36,19 +36,19 @@
             </div>
             <div class="profile-info-grid">
                 <div class="profile-info-group">
-                    <label>{% blocktrans %}First name:{% endblocktrans %}</label>
+                    <span class="profile-info-label">{% blocktrans %}First name:{% endblocktrans %}</span>
                     <div class="profile-info-value">{{ user.first_name|default:"—" }}</div>
                 </div>
                 <div class="profile-info-group">
-                    <label>{% blocktrans %}Last name:{% endblocktrans %}</label>
+                    <span class="profile-info-label">{% blocktrans %}Last name:{% endblocktrans %}</span>
                     <div class="profile-info-value">{{ user.last_name|default:"—" }}</div>
                 </div>
                 <div class="profile-info-group">
-                        <label>{% blocktrans %}Username:{% endblocktrans %}</label>
+                        <span class="profile-info-label">{% blocktrans %}Username:{% endblocktrans %}</span>
                         <div class="profile-info-value">{{ user.username }}</div>
                 </div>
                 <div class="profile-info-group">
-                        <label>{% blocktrans %}Birthday:{% endblocktrans %}</label>
+                        <span class="profile-info-label">{% blocktrans %}Birthday:{% endblocktrans %}</span>
                         <div class="profile-info-value">{{ profile.date_of_birth|default:"—" }}</div>
                 </div>
             </div>

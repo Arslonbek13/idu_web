@@ -14,8 +14,6 @@ from .forms import ContactForm, CommentForm
 
 CONTACT_TEMPLATE = 'news/contact.html'
 
-# Create your views here.
-
 
 def news_list(request):
     all_news = News.published.all()
@@ -30,8 +28,6 @@ def news_list(request):
 
 def news_detail(request, news):
     news = get_object_or_404(News, slug=news, status=News.Status.Published)
-    # news.view_count = news.view_count + 1
-    # news.save()
     context = {}
     hit_count = get_hitcount_model().objects.get_for_object(news)
     hits = hit_count.hits
@@ -73,21 +69,6 @@ def news_detail(request, news):
     }
     return render(request, 'news/news_detail.html', context)
 
-
-# def homePageView(request):
-#     categories = Category.objects.all()
-#     news_list = News.published.all().order_by('-publish_time')[:15]
-#     local_one = News.published.filter(category__name='Local').order_by("-publish_time")
-#     local_news = News.published.all().filter(category__name='Local').order_by('-publish_time')[:5]
-#     context = {
-#         'news_list': news_list,
-#         'categories': categories,
-#         'local_one': local_one,
-#         'local_news': local_news
-#     }
-#     return render(request, "news/index.html", context)
-
-
 class HomePageView(ListView):
     model = News
     template_name = 'news/index.html'
@@ -104,20 +85,6 @@ class HomePageView(ListView):
         return context
 
 
-
-# def contactPageView(request):
-#     form = ContactForm(request.POST or None)
-#     if request.method == "POST" and form.is_valid():
-#         form.save()
-#         return HttpResponse('<h2>Thank you for contact us.</h2>')
-#     context = {
-#         "form": form
-#     }
-#     return render(request, 'news/contact.html', context)
-
-
-
-
 class ContactPageView(TemplateView):
     template_name = CONTACT_TEMPLATE
 
@@ -126,7 +93,7 @@ class ContactPageView(TemplateView):
         context = {
             "form": form
         }
-        return render(request, CONTACT_TEMPLATE, context)
+        return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
         form = ContactForm(request.POST)
@@ -136,15 +103,12 @@ class ContactPageView(TemplateView):
         context = {
             "form": form
         }
-        return render(request, CONTACT_TEMPLATE, context)
+        return render(request, self.template_name, context)
 
 
 
-def errorPageView(request):
-    context = {
-
-    }
-    return render(request, 'news/404.html', context)
+def error_page_view(request):
+    return render(request, 'news/404.html', {})
 
 
 class LocalNewsView(ListView):

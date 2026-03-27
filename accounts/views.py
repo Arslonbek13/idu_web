@@ -9,6 +9,25 @@ from .forms import LoginForm, UserRegistrationForm, UserEditForm, ProfileEditFor
 from .models import Profile
 
 
+def _get_profile_for_user(user):
+    try:
+        return user.profile
+    except ObjectDoesNotExist:
+        return None
+
+
+def _build_profile_form(profile, *args, **kwargs):
+    if profile:
+        return ProfileEditForm(instance=profile, *args, **kwargs)
+    return ProfileEditForm(*args, **kwargs)
+
+
+def _save_profile_form(profile_form, user):
+    profile = profile_form.save(commit=False)
+    profile.user = user
+    profile.save()
+
+
 
 def user_login(request):
     categories = Category.objects.all()
@@ -34,18 +53,6 @@ def user_login(request):
         'categories': categories,
     }
     return render(request, 'registration/login.html', context)
-
-
-# def dashboard_view(request):
-#     user = request.user
-#     profile_info = Profile.objects.filter(user=user)
-#     categories = Category.objects.all()
-#     context = {
-#         'user': user,
-#         'profile': profile_info,
-#         'categories': categories
-#     }
-#     return render(request, 'pages/user_profile.html', context)
 
 @login_required
 def dashboard_view(request):
@@ -89,72 +96,18 @@ def user_register(request):
             'categories': categories
         }
         return render(request, 'account/register.html', context)
-
-
-# class SignUpView(CreateView):
-#     form_class = UserCreationForm
-#     success_url = reverse_lazy('login')
-#     template_name = 'account/register.html'
-
-
-    # def form_valid(self, form):
-    #     response = super().form_valid(form)
-    #     # Set the user's password after it's been created
-    #     self.object.set_password(form.cleaned_data['password'])
-    #     self.object.save()
-    #     return response
-    #
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     categories = Category.objects.all()
-    #     context['categories'] = categories
-    #     return context
-
-
-
-
-
-# def edit_user(request):
-#     if request.method == 'POST':
-#         user_form = UserEditForm(instance=request.user, data=request.POST)
-#         profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
-#         if user_form.is_valid() and profile_form.is_valid():
-#             user_form.save()
-#             profile_form.save()
-#     else:
-#         user_form = UserEditForm(instance=request.user)
-#         profile_form = ProfileEditForm(instance=request.user.profile)
-#     return render(request, 'account/profile_edit.html', {"user_form": user_form, "profile_form": profile_form})
-
-
-
 @login_required
 def edit_user(request):
-    try:
-        profile = request.user.profile
-    except ObjectDoesNotExist:
-        profile = None
+    profile = _get_profile_for_user(request.user)
 
     if request.method == 'POST':
         user_form = UserEditForm(instance=request.user, data=request.POST)
-        if profile:
-            profile_form = ProfileEditForm(instance=profile, data=request.POST, files=request.FILES)
-        else:
-            profile_form = ProfileEditForm(data=request.POST, files=request.FILES)
+        profile_form = _build_profile_form(profile, data=request.POST, files=request.FILES)
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            if profile:
-                profile_form.save()
-            else:
-                new_profile = profile_form.save(commit=False)
-                new_profile.user = request.user
-                new_profile.save()
+            _save_profile_form(profile_form, request.user)
         return redirect('user_profile')
-    else:
-        user_form = UserEditForm(instance=request.user)
-        if profile:
-            profile_form = ProfileEditForm(instance=profile)
-        else:
-            profile_form = ProfileEditForm()
-    return render(request, 'account/profile_edit.html', {"user_form": user_form, "profile_form": profile_form})
 
+    user_form = UserEditForm(instance=request.user)
+    profile_form = _build_profile_form(profile)
+    return render(request, 'account/profile_edit.html', {"user_form": user_form, "profile_form": profile_form})

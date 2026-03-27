@@ -6,15 +6,15 @@ function hidePreloader() {
 }
 
 function initHeadlineTicker() {
-    var tickers = document.querySelectorAll("[data-news-ticker]");
+    const tickers = document.querySelectorAll("[data-news-ticker]");
 
     tickers.forEach(function (root) {
-        var items = Array.prototype.slice.call(root.querySelectorAll(".news_sticker_item"));
-        var prevButton = root.querySelector("[data-ticker-prev]");
-        var nextButton = root.querySelector("[data-ticker-next]");
-        var activeIndex = 0;
-        var autoplayId = null;
-        var autoplayDelay = 5000;
+        const items = Array.prototype.slice.call(root.querySelectorAll(".news_sticker_item"));
+        const prevButton = root.querySelector("[data-ticker-prev]");
+        const nextButton = root.querySelector("[data-ticker-next]");
+        let activeIndex = 0;
+        let autoplayId = null;
+        const autoplayDelay = 5000;
 
         if (!items.length) {
             return;
@@ -24,7 +24,7 @@ function initHeadlineTicker() {
             activeIndex = (index + items.length) % items.length;
 
             items.forEach(function (item, itemIndex) {
-                var isActive = itemIndex === activeIndex;
+                const isActive = itemIndex === activeIndex;
                 item.classList.toggle("is-active", isActive);
                 item.setAttribute("aria-hidden", String(!isActive));
             });
@@ -32,7 +32,7 @@ function initHeadlineTicker() {
 
         function stopAutoplay() {
             if (autoplayId) {
-                window.clearInterval(autoplayId);
+                globalThis.clearInterval(autoplayId);
                 autoplayId = null;
             }
         }
@@ -43,17 +43,17 @@ function initHeadlineTicker() {
             }
 
             stopAutoplay();
-            autoplayId = window.setInterval(function () {
+            autoplayId = globalThis.setInterval(function () {
                 showItem(activeIndex + 1);
             }, autoplayDelay);
         }
 
-        var initialIndex = items.findIndex(function (item) {
+        const initialIndex = items.findIndex(function (item) {
             return item.classList.contains("is-active");
         });
 
         root.classList.add("ticker-ready");
-        showItem(initialIndex >= 0 ? initialIndex : 0);
+        showItem(Math.max(initialIndex, 0));
 
         if (items.length < 2) {
             if (prevButton) {
@@ -118,10 +118,10 @@ function initLatestPostTicker() {
     }
 
     $(".latest_postnav").each(function () {
-        var $list = $(this);
-        var $container = $list.closest(".latest_post_container");
-        var itemCount = $list.children("li").length;
-        var rowHeight = 110;
+        const $list = $(this);
+        const $container = $list.closest(".latest_post_container");
+        const itemCount = $list.children("li").length;
+        let rowHeight = 110;
 
         if (itemCount < 2) {
             $container.find(".latest_post_control").hide();
@@ -162,7 +162,7 @@ function initMediaGallery() {
 }
 
 function initScrollToTop() {
-    $(window).on("scroll", function () {
+    $(globalThis).on("scroll", function () {
         if ($(this).scrollTop() > 300) {
             $(".scrollToTop").fadeIn();
         } else {
@@ -186,7 +186,7 @@ jQuery(document).ready(function () {
     initHeadlineTicker();
 });
 
-jQuery(window).on("load pageshow", function () {
+jQuery(globalThis).on("load pageshow", function () {
     hidePreloader();
 });
 
